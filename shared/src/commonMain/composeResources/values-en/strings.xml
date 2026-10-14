@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Card -->
+    <string name="card_title">Menzomat</string>
+    <string name="action_settings">Settings</string>
+    <string name="subtitle_ready">Hold your card against the back of the phone</string>
+    <string name="subtitle_reading">Reading card…</string>
+
+    <string name="prompt_title">Tap your card</string>
+    <string name="prompt_subtitle">Hold the card against the back of your phone until it has been read.</string>
+    <string name="reading_title">Reading card…</string>
+    <string name="reading_subtitle">Don\'t move the card.</string>
+
+    <string name="nfc_disabled_title">NFC is turned off</string>
+    <string name="nfc_disabled_body">Turn on NFC to read your card.</string>
+    <string name="nfc_disabled_action">Turn on NFC</string>
+    <string name="nfc_unavailable_title">NFC is not available</string>
+    <string name="nfc_unavailable_body">This device has no NFC reader.</string>
+
+    <string name="error_tag_lost">Lost the connection to the card. Hold it still against the phone while it is read.</string>
+    <string name="error_not_desfire">This is not a MIFARE DESFire card.</string>
+    <string name="error_no_apps">The card has no data that can be read.</string>
+    <string name="error_communication">Error talking to the card: %1$s</string>
+    <string name="error_communication_unknown">Error talking to the card.</string>
+    <string name="error_dismiss">Dismiss</string>
+
+    <string name="profile_chip_auto">%1$s · auto</string>
+    <string name="profile_chip_none">Profile</string>
+    <string name="profile_picker_title">Card profile</string>
+    <string name="profile_auto">Automatic</string>
+    <string name="profile_auto_summary">Detect the university from the card</string>
+    <string name="profile_match">Match %1$d%</string>
+    <string name="profile_no_match">Doesn\'t look like this card</string>
+    <string name="profile_low_confidence">This card doesn\'t look like the “%1$s” profile. The display may be wrong.</string>
+    <string name="profile_close">Close</string>
+
+    <string name="unrecognized_title">Card not recognized</string>
+    <string name="unrecognized_body">This card doesn\'t look like any known profile. You can try one by hand, or export the raw data.</string>
+    <string name="unrecognized_pick">Try a profile…</string>
+
+    <string name="holder_unknown">Unknown cardholder</string>
+    <string name="study_year">Year %1$d</string>
+
+    <string name="meals_title">Meal balance</string>
+    <string name="meals_breakfast">Breakfast</string>
+    <string name="meals_lunch">Lunch</string>
+    <string name="meals_dinner">Dinner</string>
+    <string name="meals_line">Breakfast %1$d · Lunch %2$d · Dinner %3$d</string>
+    <string name="meals_left_to_buy">Left to buy: %1$s</string>
+    <string name="meals_next_month">For next month: %1$s</string>
+
+    <string name="validity_valid">Valid until %1$s</string>
+    <plurals name="validity_expires_in_days">
+        <item quantity="one">Expires in %1$d day</item>
+        <item quantity="other">Expires in %1$d days</item>
+    </plurals>
+    <string name="validity_expired">Expired %1$s</string>
+    <string name="validity_not_validated">Not validated</string>
+
+    <string name="account_title">Account</string>
+    <string name="cash_label">Cash balance</string>
+    <string name="cash_value">%1$d RSD</string>
+    <string name="last_transaction_label">Last transaction</string>
+    <string name="transaction_purchase">Purchase / top-up</string>
+    <string name="transaction_with_date">%1$s · %2$s</string>
+    <string name="meal_times">%1$s ×%2$d</string>
+
+    <string name="details_title">Card</string>
+    <string name="card_number">Card number</string>
+    <string name="issued_on">Issued</string>
+    <string name="validated_until">Validated until</string>
+    <string name="not_validated">Not validated</string>
+    <string name="card_valid_until">Card valid until</string>
+    <string name="national_id">National ID (JMBG)</string>
+    <string name="national_id_show">Show national ID</string>
+    <string name="national_id_hide">Hide national ID</string>
+
+    <string name="extras_title">Other</string>
+    <string name="warnings_title">Some fields could not be read</string>
+    <string name="warning_line">%1$s: %2$s</string>
+
+    <string name="raw_title">Raw data</string>
+    <string name="raw_expand">Show raw data</string>
+    <string name="raw_collapse">Hide raw data</string>
+    <string name="raw_app">Application %1$s</string>
+    <string name="raw_file">File 0x%1$s · %2$s · %3$d B</string>
+    <string name="raw_file_unknown_size">File 0x%1$s · %2$s</string>
+    <string name="raw_file_error">File 0x%1$s not read: %2$s</string>
+    <string name="raw_privacy">The exported record contains personal data (name, national ID).</string>
+    <string name="raw_share">Share</string>
+    <string name="raw_copy">Copy</string>
+    <string name="dump_copied">Copied</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+
+    <string name="settings_profile_section">Card profile</string>
+    <string name="settings_profile_auto">Automatic</string>
+    <string name="settings_profile_auto_summary">Detect the university from the card</string>
+
+    <string name="settings_theme_section">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Wallpaper colors</string>
+    <string name="settings_dynamic_color_summary">Use colors from your wallpaper instead of the ISIC colors</string>
+
+    <string name="settings_about_section">About</string>
+    <string name="settings_about_body">Menzomat reads the canteen card on your phone only. Nothing is sent to the internet, and the last card read is stored on this device alone.</string>
+</resources>
