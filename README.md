@@ -9,8 +9,11 @@ Only the **University of Novi Sad** card is supported so far, but one app is mea
 ```sh
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (81)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installDebug      # install on a connected phone (needs NFC)
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installBenchmark  # release build signed with the debug key; judge scrolling and animation on this one
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:compileCommonMainKotlinMetadata   # proves commonMain uses only common APIs
 ```
+
+Debug builds run Compose several times slower (about 15% janky frames while scrolling on a Pixel 7, against 0% in the benchmark build), so do not judge smoothness on them.
 
 Needs the Android SDK (`local.properties` → `sdk.dir`), JDK 17, and a phone with NFC; emulators have no NFC. AGP is pinned to 9.3.0 to match Android Studio. The Compose Multiplatform Material3 is an alpha because the stable one lacks the Expressive APIs.
 

@@ -30,6 +30,12 @@ android {
                 "proguard-rules.pro",
             )
         }
+        // Debug builds run Compose several times slower, so judge scrolling and animation on this one:
+        // a release build signed with the debug key. `./gradlew :androidApp:installBenchmark`
+        create("benchmark") {
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
 
     compileOptions {
