@@ -8,8 +8,6 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.YearMonth
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.junit.Rule
@@ -40,13 +38,8 @@ import st.misa.menzomat.shared.resources.prompt_title
 import st.misa.menzomat.shared.resources.reading_title
 import st.misa.menzomat.shared.resources.unrecognized_pick
 import st.misa.menzomat.shared.resources.unrecognized_title
-import st.misa.menzomat.ui.platform.DateFormatter
 import st.misa.menzomat.ui.platform.LocalPlatformServices
-import st.misa.menzomat.ui.platform.NfcSettings
-import st.misa.menzomat.ui.platform.NoPlatformTheme
-import st.misa.menzomat.ui.platform.PlatformServices
-import st.misa.menzomat.ui.platform.ShareSheet
-import st.misa.menzomat.ui.platform.TextClipboard
+import st.misa.menzomat.testPlatform
 import st.misa.menzomat.ui.theme.MenzomatTheme
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -57,16 +50,7 @@ class CardScreenTest {
 
     private fun string(res: StringResource, vararg args: Any): String = runBlocking { getString(res, *args) }
 
-    private val platform = PlatformServices(
-        shareSheet = object : ShareSheet { override suspend fun shareText(text: String) = Unit },
-        clipboard = object : TextClipboard { override suspend fun copyText(text: String) = Unit },
-        nfcSettings = object : NfcSettings { override fun open() = Unit },
-        dateFormatter = object : DateFormatter {
-            override fun mediumDate(date: LocalDate) = date.toString()
-            override fun monthAndYear(month: YearMonth) = month.toString()
-        },
-        theme = NoPlatformTheme,
-    )
+    private val platform = testPlatform
 
     private val dump = CardDump("04AA", 0, listOf(AppDump(Aid(13))))
     private val uns = ProfileInfo("uns", "Univerzitet u Novom Sadu", "UNS")

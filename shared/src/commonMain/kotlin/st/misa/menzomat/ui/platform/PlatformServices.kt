@@ -40,6 +40,9 @@ interface ThemePlatform {
     fun prefersReducedMotion(): Boolean
 }
 
+/** What the running app says about itself, for the About section. */
+class AppInfo(val versionName: String)
+
 /** What the shared UI needs from the platform, provided once at the root by each app. */
 class PlatformServices(
     val shareSheet: ShareSheet,
@@ -47,6 +50,7 @@ class PlatformServices(
     val nfcSettings: NfcSettings,
     val dateFormatter: DateFormatter,
     val theme: ThemePlatform,
+    val appInfo: AppInfo,
 )
 
 val LocalPlatformServices = staticCompositionLocalOf<PlatformServices> {

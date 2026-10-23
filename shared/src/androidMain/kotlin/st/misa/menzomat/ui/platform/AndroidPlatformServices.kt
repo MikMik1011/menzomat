@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
 import androidx.compose.material3.ColorScheme
@@ -25,7 +26,18 @@ fun androidPlatformServices(activity: Activity): PlatformServices = PlatformServ
     nfcSettings = AndroidNfcSettings(activity),
     dateFormatter = AndroidDateFormatter(),
     theme = AndroidThemePlatform(),
+    appInfo = AppInfo(activity.appVersionName()),
 )
+
+private fun Activity.appVersionName(): String = runCatching {
+    val info = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0))
+    } else {
+        @Suppress("DEPRECATION")
+        packageManager.getPackageInfo(packageName, 0)
+    }
+    info.versionName
+}.getOrNull().orEmpty()
 
 private class AndroidShareSheet(private val activity: Activity) : ShareSheet {
     override suspend fun shareText(text: String) {

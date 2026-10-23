@@ -89,4 +89,8 @@
     <string name="settings_theme_dark">Tamna</string>
     <string name="settings_dynamic_color">Boje sa pozadine</string>
 
+    <string name="settings_about_section">O aplikaciji</string>
+    <string name="about_version">Verzija</string>
+    <string name="about_source">Izvorni kod</string>
+    <string name="about_license">Licenca</string>
 </resources>

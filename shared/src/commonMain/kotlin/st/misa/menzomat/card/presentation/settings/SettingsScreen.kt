@@ -1,5 +1,6 @@
 package st.misa.menzomat.card.presentation.settings
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.jetbrains.compose.resources.stringResource
@@ -37,6 +40,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.ThemeMode
 import st.misa.menzomat.shared.resources.Res
+import st.misa.menzomat.shared.resources.about_license
+import st.misa.menzomat.shared.resources.about_source
+import st.misa.menzomat.shared.resources.about_version
+import st.misa.menzomat.shared.resources.settings_about_section
 import st.misa.menzomat.shared.resources.settings_back
 import st.misa.menzomat.shared.resources.settings_dynamic_color
 import st.misa.menzomat.shared.resources.settings_profile_auto
@@ -47,6 +54,7 @@ import st.misa.menzomat.shared.resources.settings_theme_section
 import st.misa.menzomat.shared.resources.settings_theme_system
 import st.misa.menzomat.shared.resources.settings_title
 import st.misa.menzomat.ui.components.ChoiceRow
+import st.misa.menzomat.ui.components.InfoRow
 import st.misa.menzomat.ui.components.SectionHeader
 import st.misa.menzomat.ui.theme.contentMaxWidth
 import st.misa.menzomat.ui.platform.LocalPlatformServices
@@ -100,6 +108,7 @@ fun SettingsScreen(
             ) {
                 ProfileSection(state, actions)
                 ThemeSection(state, actions)
+                AboutSection()
             }
         }
     }
@@ -153,6 +162,30 @@ private fun ThemeSection(state: SettingsUiState, actions: SettingsActions) {
         )
     }
 }
+
+@Composable
+private fun AboutSection() {
+    SectionTitle(stringResource(Res.string.settings_about_section))
+    val version = LocalPlatformServices.current.appInfo.versionName
+    if (version.isNotBlank()) InfoRow(stringResource(Res.string.about_version), version)
+    LinkRow(stringResource(Res.string.about_source), SOURCE_URL)
+    LinkRow(stringResource(Res.string.about_license), LICENSE_URL)
+}
+
+/** A row that opens [url] outside the app; the trailing icon says so. */
+@Composable
+private fun LinkRow(label: String, url: String) {
+    val uriHandler = LocalUriHandler.current
+    ListItem(
+        modifier = Modifier.clickable(role = Role.Button) { runCatching { uriHandler.openUri(url) } },
+        headlineContent = { Text(label) },
+        trailingContent = { Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null) },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
+}
+
+private const val SOURCE_URL = "https://github.com/MikMik1011/menzomat"
+private const val LICENSE_URL = "$SOURCE_URL/blob/main/LICENSE"
 
 @Composable
 private fun SectionTitle(text: String) {
