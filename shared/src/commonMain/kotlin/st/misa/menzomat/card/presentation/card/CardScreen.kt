@@ -14,16 +14,15 @@ import androidx.compose.material.icons.rounded.SwapHoriz
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
@@ -33,7 +32,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.window.core.layout.WindowSizeClass
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.NfcStatus
@@ -51,7 +49,7 @@ import st.misa.menzomat.shared.resources.profile_chip_none
 import st.misa.menzomat.ui.theme.contentMaxWidth
 import st.misa.menzomat.ui.theme.spacing
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardScreen(
     state: CardUiState,
@@ -60,16 +58,15 @@ fun CardScreen(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
-    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     var pickerOpen by rememberSaveable { mutableStateOf(false) }
     val isWide = currentWindowAdaptiveInfo().windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val colors = MaterialTheme.colorScheme
 
     Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         topBar = {
-            LargeFlexibleTopAppBar(
+            TopAppBar(
                 title = { Text(stringResource(Res.string.card_title)) },
                 actions = {
                     ProfileChip(state.content, onClick = { pickerOpen = true })
@@ -79,11 +76,9 @@ fun CardScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = colors.primaryContainer,
-                    scrolledContainerColor = colors.primaryContainer,
                     titleContentColor = colors.onPrimaryContainer,
                     actionIconContentColor = colors.onPrimaryContainer,
                 ),
-                scrollBehavior = scrollBehavior,
             )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
