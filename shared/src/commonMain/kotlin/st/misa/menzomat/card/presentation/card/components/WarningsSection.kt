@@ -21,8 +21,14 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.StudentCard
+import st.misa.menzomat.card.domain.model.WarningReason
 import st.misa.menzomat.shared.resources.Res
+import st.misa.menzomat.shared.resources.warning_invalid
 import st.misa.menzomat.shared.resources.warning_line
+import st.misa.menzomat.shared.resources.warning_missing
+import st.misa.menzomat.shared.resources.warning_truncated
+import st.misa.menzomat.shared.resources.warning_unreadable
+import st.misa.menzomat.shared.resources.warning_unreadable_unknown
 import st.misa.menzomat.shared.resources.warnings_title
 import st.misa.menzomat.ui.theme.spacing
 
@@ -43,8 +49,17 @@ internal fun WarningsSection(card: StudentCard) {
                 )
             }
             card.warnings.forEach {
-                Text(stringResource(Res.string.warning_line, it.field, it.message), style = MaterialTheme.typography.bodySmall)
+                Text(stringResource(Res.string.warning_line, it.field, reasonText(it.reason)), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
+}
+
+@Composable
+private fun reasonText(reason: WarningReason): String = when (reason) {
+    WarningReason.Truncated -> stringResource(Res.string.warning_truncated)
+    WarningReason.Missing -> stringResource(Res.string.warning_missing)
+    is WarningReason.Invalid -> stringResource(Res.string.warning_invalid, reason.detail)
+    is WarningReason.Unreadable ->
+        reason.detail?.let { stringResource(Res.string.warning_unreadable, it) } ?: stringResource(Res.string.warning_unreadable_unknown)
 }

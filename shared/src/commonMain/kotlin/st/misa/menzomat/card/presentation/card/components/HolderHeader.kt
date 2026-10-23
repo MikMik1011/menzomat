@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.semantics
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.StudentCard
 import st.misa.menzomat.shared.resources.Res
+import st.misa.menzomat.shared.resources.faculty_number
 import st.misa.menzomat.shared.resources.holder_unknown
 import st.misa.menzomat.shared.resources.study_year
 import st.misa.menzomat.ui.theme.spacing
@@ -23,7 +24,7 @@ internal fun HolderHeader(card: StudentCard) {
         .ifBlank { stringResource(Res.string.holder_unknown) }
     val institution = card.institution
     val details = listOfNotNull(
-        institution?.faculty,
+        institution?.faculty?.let { it.name ?: stringResource(Res.string.faculty_number, it.id) },
         institution?.studyYear?.let { stringResource(Res.string.study_year, it) },
         institution?.studentId,
     ).joinToString(" · ")

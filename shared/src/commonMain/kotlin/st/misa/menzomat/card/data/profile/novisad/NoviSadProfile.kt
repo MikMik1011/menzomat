@@ -1,8 +1,9 @@
 package st.misa.menzomat.card.data.profile.novisad
 
 import st.misa.menzomat.card.domain.model.ExtraField
+import st.misa.menzomat.card.domain.model.ExtraValue
+import st.misa.menzomat.card.domain.model.Faculty
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Instant
 import st.misa.menzomat.card.domain.model.Holder
@@ -11,6 +12,7 @@ import st.misa.menzomat.card.domain.model.MealBalance
 import st.misa.menzomat.card.domain.model.StudentCard
 import st.misa.menzomat.card.domain.model.Transaction
 import st.misa.menzomat.card.domain.model.Validity
+import st.misa.menzomat.card.domain.model.WarningReason
 import st.misa.menzomat.card.domain.profile.CardProfile
 import st.misa.menzomat.card.domain.profile.DecodeScope
 import st.misa.menzomat.core.domain.desfire.AppDump
@@ -22,7 +24,6 @@ import st.misa.menzomat.core.domain.util.MonthBase
 import st.misa.menzomat.core.domain.util.hex
 import st.misa.menzomat.core.domain.util.dateOrNull
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.YearMonth
 
 /** Student canteen card of the University of Novi Sad (DESFire application 0x0D0000, free read). */
@@ -62,7 +63,7 @@ internal class NoviSadProfile : CardProfile {
             val year = cursor.u8()
             val month = cursor.u8()
             val yearMonth = runCatching { YearMonth(2000 + year, month) }.getOrNull()
-            if (yearMonth == null) scope.warn(fileLabel(NoviSadLayout.BALANCE), "invalid balance month $month/$year")
+            if (yearMonth == null) scope.warn(fileLabel(NoviSadLayout.BALANCE), WarningReason.Invalid("$month/$year"))
             Balances(month, yearMonth, cursor.meals(), cursor.meals(), cursor.meals())
         }
 
@@ -73,7 +74,7 @@ internal class NoviSadProfile : CardProfile {
             val year = cursor.u8()
             val meals = cursor.meals()
             val date = resolveTransactionDate(day, month, year, balances?.monthValue, today)
-            if (date == null) scope.warn(fileLabel(NoviSadLayout.LAST_TRANSACTION), "invalid transaction date $day.$month.$year")
+            if (date == null) scope.warn(fileLabel(NoviSadLayout.LAST_TRANSACTION), WarningReason.Invalid("$day.$month.$year"))
             Transaction(date, meals)
         }
 
@@ -115,17 +116,11 @@ internal class NoviSadProfile : CardProfile {
 
         val extras = buildList {
             if (app?.file(NoviSadLayout.MEDICAL_CHECK)?.data != null) {
-                add(
-                    ExtraField(
-                        key = "medical-check",
-                        label = "Poslednji sistematski pregled",
-                        value = medical?.let(DISPLAY_DATE::format) ?: "Nije urađen",
-                    ),
-                )
+                add(ExtraField("medical-check", "Last medical check-up", medical?.let(ExtraValue::Date) ?: ExtraValue.Absent))
             }
             app?.file(NoviSadLayout.TRANSACTION_COUNTER)?.data?.let { data ->
                 runCatching { ByteCursor(data).u32le() }.getOrNull()?.let {
-                    add(ExtraField("transaction-counter", "Brojač transakcija", it.toString()))
+                    add(ExtraField("transaction-counter", "Transaction counter", ExtraValue.Text(it.toString())))
                 }
             }
         }
@@ -135,7 +130,7 @@ internal class NoviSadProfile : CardProfile {
             cardNumber = cardFile?.number?.takeIf { it.isNotEmpty() },
             institution = Institution(
                 name = displayName,
-                faculty = studentFile?.let { facultyName(it.facultyId) },
+                faculty = studentFile?.let { Faculty(it.facultyId, NoviSadLayout.facultyNames[it.facultyId]) },
                 // File 0x07 still holds the year from before the yearly renewal. The validated-until date in
                 // 0x06 only exists once the card has been renewed, so its presence means one more year.
                 studyYear = studentFile?.studyYear?.let { if (validatedUntil != null) it + 1 else it },
@@ -163,7 +158,7 @@ internal class NoviSadProfile : CardProfile {
         val file = app?.file(fileId)
         val data = file?.data
         if (data == null) {
-            if (app != null) warn(label, file?.error ?: "file not present")
+            if (app != null) warn(label, file?.error?.let(WarningReason::Unreadable) ?: WarningReason.Missing)
             return null
         }
         return field(label) { block(data) }
@@ -206,8 +201,6 @@ internal class NoviSadProfile : CardProfile {
         }
     }
 
-    private fun facultyName(id: Int): String = NoviSadLayout.facultyNames[id] ?: "Fakultet $id"
-
     private fun fileLabel(fileId: Int): String = "0x${fileId.hex(2)}"
 
     private class CardNumberFile(val date: Triple<Int, Int, Int>, val number: String)
@@ -227,13 +220,5 @@ internal class NoviSadProfile : CardProfile {
         const val PER_FILE_SCORE = 5
 
         val CARD_ZONE: TimeZone = TimeZone.of("Europe/Belgrade")
-        val DISPLAY_DATE: DateTimeFormat<LocalDate> = LocalDate.Format {
-            day()
-            char('.')
-            monthNumber()
-            char('.')
-            year()
-            char('.')
-        }
     }
 }

@@ -51,6 +51,15 @@
 
     <string name="warnings_title">Neka polja nisu pročitana</string>
     <string name="warning_line">%1$s: %2$s</string>
+    <string name="extra_medical_check">Poslednji sistematski pregled</string>
+    <string name="extra_medical_check_none">Nije urađen</string>
+    <string name="extra_transaction_counter">Brojač transakcija</string>
+    <string name="faculty_number">Fakultet %1$d</string>
+    <string name="warning_truncated">podaci su prekratki</string>
+    <string name="warning_missing">fajl nije pronađen</string>
+    <string name="warning_invalid">neispravna vrednost: %1$s</string>
+    <string name="warning_unreadable">nije moguće pročitati: %1$s</string>
+    <string name="warning_unreadable_unknown">nije moguće pročitati</string>
 
     <string name="raw_title">Sirovi podaci</string>
     <string name="raw_expand">Prikaži sirove podatke</string>

@@ -51,6 +51,15 @@
 
     <string name="warnings_title">Some fields could not be read</string>
     <string name="warning_line">%1$s: %2$s</string>
+    <string name="extra_medical_check">Last medical check-up</string>
+    <string name="extra_medical_check_none">Not done</string>
+    <string name="extra_transaction_counter">Transaction counter</string>
+    <string name="faculty_number">Faculty %1$d</string>
+    <string name="warning_truncated">data too short</string>
+    <string name="warning_missing">file not found</string>
+    <string name="warning_invalid">invalid value: %1$s</string>
+    <string name="warning_unreadable">could not be read: %1$s</string>
+    <string name="warning_unreadable_unknown">could not be read</string>
 
     <string name="raw_title">Raw data</string>
     <string name="raw_expand">Show raw data</string>

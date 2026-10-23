@@ -7,7 +7,7 @@ Only the **University of Novi Sad** card is supported so far, but one app is mea
 ## Build
 
 ```sh
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (76)
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (82)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installDebug      # install on a connected phone (needs NFC)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installBenchmark  # release build signed with the debug key; judge scrolling and animation on this one
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:compileCommonMainKotlinMetadata   # proves commonMain uses only common APIs
@@ -54,7 +54,7 @@ Everything in `commonMain` is plain common Kotlin. What genuinely differs per pl
 
 ## UI copy
 
-Labels only: no taglines, helper text or secondary descriptions. If a screen needs them to make sense, change the layout (alignment, icons, grouping, dimming) instead. A value that sits next to a label does not need a title over the group, and a state that has an icon and a title does not need a sentence. Anything that is only an icon or a number still gets a content description, so screen readers (and UI-driving agents) read the sentence that sighted users infer. Two kept on purpose: the personal-data warning next to Share/Copy, and the detail in "Error talking to the card".
+Labels only: no taglines, helper text or secondary descriptions. If a screen needs them to make sense, change the layout (alignment, icons, grouping, dimming) instead. A value that sits next to a label does not need a title over the group, and a state that has an icon and a title does not need a sentence. Anything that is only an icon or a number still gets a content description, so screen readers (and UI-driving agents) read the sentence that sighted users infer. Text the user reads lives in the string resources, in both languages (a test fails when the two files drift apart); models carry data and keys, such as `ExtraField.key` or `WarningReason`, and the UI words them. Two kept on purpose: the personal-data warning next to Share/Copy, and the detail in "Error talking to the card".
 
 ## Adding a university
 

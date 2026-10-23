@@ -26,10 +26,13 @@ data class Holder(
 
 data class Institution(
     val name: String,
-    val faculty: String? = null,
+    val faculty: Faculty? = null,
     val studyYear: Int? = null,
     val studentId: String? = null,
 )
+
+/** The card names a faculty by number; [name] is set when the profile knows it, and the app words the fallback. */
+data class Faculty(val id: Int, val name: String? = null)
 
 data class Validity(
     val issuedOn: LocalDate?,
@@ -53,14 +56,40 @@ data class Transaction(
     val mealsEaten: MealBalance,
 )
 
-/** Escape hatch for data that only one university's cards carry. */
+/**
+ * Escape hatch for data that only one university's cards carry. The app words a known [key] in the
+ * user's language and shows [label] for any other, so keep the value free of language.
+ */
 data class ExtraField(
     val key: String,
     val label: String,
-    val value: String,
+    val value: ExtraValue,
 )
+
+sealed interface ExtraValue {
+    data class Text(val text: String) : ExtraValue
+    data class Date(val date: LocalDate) : ExtraValue
+
+    /** The card says there is nothing, such as a check-up that was never done. */
+    data object Absent : ExtraValue
+}
 
 data class DecodeWarning(
     val field: String,
-    val message: String,
+    val reason: WarningReason,
 )
+
+/** Why a field could not be decoded. Free of language; the app words it. */
+sealed interface WarningReason {
+    /** The file ended before the field did. */
+    data object Truncated : WarningReason
+
+    /** The file is not on the card. */
+    data object Missing : WarningReason
+
+    /** The bytes decode to something impossible; [detail] shows the value. */
+    data class Invalid(val detail: String) : WarningReason
+
+    /** The card refused the read; [detail] is the card's own reason. */
+    data class Unreadable(val detail: String?) : WarningReason
+}

@@ -1,6 +1,10 @@
 package st.misa.menzomat.card.data.profile.novisad
 
+import st.misa.menzomat.card.domain.model.DecodeWarning
+import st.misa.menzomat.card.domain.model.ExtraValue
+import st.misa.menzomat.card.domain.model.Faculty
 import st.misa.menzomat.card.domain.model.MealBalance
+import st.misa.menzomat.card.domain.model.WarningReason
 import st.misa.menzomat.core.domain.desfire.Aid
 import st.misa.menzomat.core.domain.desfire.AppDump
 import st.misa.menzomat.core.domain.desfire.CardDump
@@ -43,8 +47,8 @@ class NoviSadProfileTest {
         assertEquals(LocalDate(2026, 10, 1), card.lastTransaction?.date)
         assertEquals(MealBalance(0, 0, 2), card.lastTransaction?.mealsEaten)
 
-        assertEquals("22.12.2025.", card.extras.single { it.key == "medical-check" }.value)
-        assertEquals("991", card.extras.single { it.key == "transaction-counter" }.value)
+        assertEquals(ExtraValue.Date(LocalDate(2025, 12, 22)), card.extras.single { it.key == "medical-check" }.value)
+        assertEquals(ExtraValue.Text("991"), card.extras.single { it.key == "transaction-counter" }.value)
         assertEquals(emptyList(), card.warnings)
     }
 
@@ -110,7 +114,7 @@ class NoviSadProfileTest {
         assertNull(card.validity?.validatedUntil)
         assertEquals(LocalDate(2024, 10, 22), card.validity?.issuedOn)
         assertEquals(LocalDate(2026, 10, 31), card.validity?.cardValidUntil, "still known from file 0x01")
-        assertEquals("Nije urađen", card.extras.single { it.key == "medical-check" }.value)
+        assertEquals(ExtraValue.Absent, card.extras.single { it.key == "medical-check" }.value)
     }
 
     @Test
@@ -133,7 +137,7 @@ class NoviSadProfileTest {
     fun `faculty and index of a three letter index`() {
         val card = decode(currentCard.with(7 to padded("010308 53562031392f3233", 22)))
         assertEquals("SV 19/23", card.institution?.studentId)
-        assertEquals("Fakultet 1", card.institution?.faculty)
+        assertEquals(Faculty(id = 1), card.institution?.faculty, "the id travels with the card; the app words the fallback")
     }
 
     @Test
@@ -141,7 +145,7 @@ class NoviSadProfileTest {
         val card = decode(currentCard.with(2 to "1a0a01"))
         assertNull(card.meals)
         assertNull(card.mealsLeftToBuy)
-        assertTrue(card.warnings.any { it.field == "0x02" })
+        assertTrue(card.warnings.any { it.field == "0x02" && it.reason == WarningReason.Truncated })
         assertEquals("ANA", card.holder?.firstName)
         assertEquals(48, card.cashBalanceRsd)
     }
@@ -150,7 +154,22 @@ class NoviSadProfileTest {
     fun `a missing file is a warning not a crash`() {
         val card = profile.decode(cardDump(currentCard - 8))
         assertNull(card.cashBalanceRsd)
-        assertTrue(card.warnings.any { it.field == "0x08" })
+        assertTrue(card.warnings.any { it.field == "0x08" && it.reason == WarningReason.Missing })
+    }
+
+    @Test
+    fun `a file the card refused to read carries the card's reason`() {
+        val card = decode(currentCard.with(8 to null))
+        assertEquals(
+            listOf(DecodeWarning("0x08", WarningReason.Unreadable("Permission denied (0x9D)"))),
+            card.warnings,
+        )
+    }
+
+    @Test
+    fun `an impossible balance month is reported as invalid`() {
+        val card = decode(currentCard.with(2 to padded("1a 0d 01 01 02 1e 17 16 00 00 00", 11)))
+        assertTrue(card.warnings.any { it.field == "0x02" && it.reason == WarningReason.Invalid("13/26") })
     }
 
     @Test
