@@ -13,11 +13,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
 import st.misa.menzomat.card.domain.model.NfcStatus
 import st.misa.menzomat.card.domain.nfc.NfcReader
 import st.misa.menzomat.card.domain.nfc.NfcTag
-import st.misa.menzomat.card.domain.nfc.TagLostException
-import st.misa.menzomat.card.domain.nfc.UnsupportedTagException
 import st.misa.menzomat.core.domain.desfire.Transceiver
 
 /**
@@ -33,12 +32,15 @@ class AndroidNfcReader(context: Context) : NfcReader {
     private val _tags = MutableSharedFlow<NfcTag>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     override val tags: Flow<NfcTag> = _tags.asSharedFlow()
 
+    /** Shared by every tag: one conversation with a card at a time. */
+    private val ioLock = Mutex()
+
     fun enable(activity: Activity) {
         _status.value = currentStatus()
         val options = Bundle().apply { putInt(NfcAdapter.EXTRA_READER_PRESENCE_CHECK_DELAY, PRESENCE_CHECK_MS) }
         adapter?.enableReaderMode(
             activity,
-            { tag -> _tags.tryEmit(IsoDepTag(tag)) },
+            { tag -> _tags.tryEmit(IsoDepTag(tag, ioLock)) },
             NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
             options,
         )
@@ -59,30 +61,18 @@ class AndroidNfcReader(context: Context) : NfcReader {
     }
 }
 
-private class IsoDepTag(private val tag: Tag) : NfcTag {
+private class IsoDepTag(private val tag: Tag, private val lock: Mutex) : NfcTag {
     override val uid: String = tag.id.toHexString(HexFormat.UpperCase)
 
-    override suspend fun <T> useTransceiver(block: suspend (Transceiver) -> T): T {
-        val isoDep = IsoDep.get(tag) ?: throw UnsupportedTagException()
-        translatingTagLoss { isoDep.connect() }
-        try {
-            isoDep.timeout = TIMEOUT_MS
-            return block { apdu -> translatingTagLoss { isoDep.transceive(apdu) } }
-        } finally {
-            runCatching { isoDep.close() }
-        }
-    }
-
-    private companion object {
-        const val TIMEOUT_MS = 5_000
-    }
+    override suspend fun <T> useTransceiver(block: suspend (Transceiver) -> T): T =
+        withIsoDep(lock, open = { IsoDep.get(tag)?.let(::PlatformIsoDep) }, block)
 }
 
-/** Android reports a vanished card as its own exception, or as a SecurityException for a stale tag. */
-private inline fun <T> translatingTagLoss(action: () -> T): T = try {
-    action()
-} catch (e: android.nfc.TagLostException) {
-    throw TagLostException(e.message)
-} catch (e: SecurityException) {
-    throw TagLostException(e.message)
+private class PlatformIsoDep(private val isoDep: IsoDep) : IsoDepLink {
+    override fun connect() = isoDep.connect()
+    override fun setTimeout(millis: Int) {
+        isoDep.timeout = millis
+    }
+    override fun transceive(apdu: ByteArray): ByteArray = isoDep.transceive(apdu)
+    override fun close() = isoDep.close()
 }

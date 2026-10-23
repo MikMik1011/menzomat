@@ -7,7 +7,7 @@ Only the **University of Novi Sad** card is supported so far, but one app is mea
 ## Build
 
 ```sh
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (72)
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (81)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installDebug      # install on a connected phone (needs NFC)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:compileCommonMainKotlinMetadata   # proves commonMain uses only common APIs
 ```
