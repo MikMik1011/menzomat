@@ -130,7 +130,7 @@ internal class NoviSadProfile : CardProfile {
             cardNumber = cardFile?.number?.takeIf { it.isNotEmpty() },
             institution = Institution(
                 name = displayName,
-                faculty = studentFile?.let { Faculty(it.facultyId, NoviSadLayout.facultyNames[it.facultyId]) },
+                faculty = studentFile?.let { Faculty(it.facultyId, NoviSadLayout.facultyKeys[it.facultyId]) },
                 // File 0x07 still holds the year from before the yearly renewal. The validated-until date in
                 // 0x06 only exists once the card has been renewed, so its presence means one more year.
                 studyYear = studentFile?.studyYear?.let { if (validatedUntil != null) it + 1 else it },

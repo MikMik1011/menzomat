@@ -68,7 +68,7 @@ Rules that came from real cards and from the user:
 - Months in files 0x01 and 0x04 are 0-based on old terminal software and 1-based on newer; 0x02, 0x06, 0x09 are always 1-based. `resolveTransactionDate` and `resolveCardDate` decide per card.
 - The validated-until date (0x06) exists only once the card is renewed. The app does not show it; its presence adds 1 to the study year stored in 0x07.
 - The holder's national id (JMBG) is deliberately never decoded, shown or masked. Do not add it back. It stays in the raw data, which is the card as read.
-- The faculty name table in `NoviSadLayout` is empty on purpose until ids are confirmed; the UI shows "Faculty N".
+- Faculty ids 1, 2 and 4 are known (Technical Sciences, Philosophy, Sciences) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
 
 ## Conventions
 

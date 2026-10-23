@@ -55,6 +55,9 @@
     <string name="extra_medical_check_none">Not done</string>
     <string name="extra_transaction_counter">Transaction counter</string>
     <string name="faculty_number">Faculty %1$d</string>
+    <string name="faculty_uns_ftn">Faculty of Technical Sciences</string>
+    <string name="faculty_uns_ff">Faculty of Philosophy</string>
+    <string name="faculty_uns_pmf">Faculty of Sciences</string>
     <string name="warning_truncated">data too short</string>
     <string name="warning_missing">file not found</string>
     <string name="warning_invalid">invalid value: %1$s</string>

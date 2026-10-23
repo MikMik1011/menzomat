@@ -134,10 +134,24 @@ class NoviSadProfileTest {
     }
 
     @Test
+    fun `the known faculties are named by key`() {
+        fun facultyOf(id: String) = decode(currentCard.with(7 to padded("${id} 03 06 323039 2f3232", 22))).institution?.faculty
+        assertEquals(Faculty(1, "uns-ftn"), facultyOf("01"))
+        assertEquals(Faculty(2, "uns-ff"), facultyOf("02"))
+        assertEquals(Faculty(4, "uns-pmf"), facultyOf("04"))
+    }
+
+    @Test
+    fun `an unknown faculty keeps its id and has no key`() {
+        val card = decode(currentCard.with(7 to padded("09 03 06 323039 2f3232", 22)))
+        assertEquals(Faculty(id = 9, key = null), card.institution?.faculty)
+    }
+
+    @Test
     fun `faculty and index of a three letter index`() {
         val card = decode(currentCard.with(7 to padded("010308 53562031392f3233", 22)))
         assertEquals("SV 19/23", card.institution?.studentId)
-        assertEquals(Faculty(id = 1), card.institution?.faculty, "the id travels with the card; the app words the fallback")
+        assertEquals(Faculty(id = 1, key = "uns-ftn"), card.institution?.faculty)
     }
 
     @Test

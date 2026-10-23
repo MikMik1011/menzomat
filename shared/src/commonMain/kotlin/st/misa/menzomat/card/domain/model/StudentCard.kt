@@ -31,8 +31,8 @@ data class Institution(
     val studentId: String? = null,
 )
 
-/** The card names a faculty by number; [name] is set when the profile knows it, and the app words the fallback. */
-data class Faculty(val id: Int, val name: String? = null)
+/** The card names a faculty by number. [key] says which faculty it is when the profile knows, and the app words it. */
+data class Faculty(val id: Int, val key: String? = null)
 
 data class Validity(
     val issuedOn: LocalDate?,

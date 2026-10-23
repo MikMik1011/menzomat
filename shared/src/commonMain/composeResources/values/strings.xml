@@ -55,6 +55,9 @@
     <string name="extra_medical_check_none">Nije urađen</string>
     <string name="extra_transaction_counter">Brojač transakcija</string>
     <string name="faculty_number">Fakultet %1$d</string>
+    <string name="faculty_uns_ftn">Fakultet tehničkih nauka</string>
+    <string name="faculty_uns_ff">Filozofski fakultet</string>
+    <string name="faculty_uns_pmf">Prirodno-matematički fakultet</string>
     <string name="warning_truncated">podaci su prekratki</string>
     <string name="warning_missing">fajl nije pronađen</string>
     <string name="warning_invalid">neispravna vrednost: %1$s</string>

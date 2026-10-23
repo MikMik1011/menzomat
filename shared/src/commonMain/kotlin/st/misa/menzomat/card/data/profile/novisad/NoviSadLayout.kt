@@ -26,7 +26,13 @@ internal object NoviSadLayout {
         0x06 to 24, 0x07 to 22, 0x08 to 6, 0x09 to 128, 0x0A to 7,
     )
 
-    // TODO(mikmik): fill in names as faculty ids are confirmed against real cards.
-    /** Faculty id (first byte of file 0x07) to name. Ids seen on real cards are 1, 2 and 4; names still unknown. */
-    val facultyNames: Map<Int, String> = emptyMap()
+    /**
+     * Faculty id (first byte of file 0x07) to the key the app words in each language. Other ids show as
+     * "Faculty N". Add the name in both string files when adding one here.
+     */
+    val facultyKeys: Map<Int, String> = mapOf(
+        1 to "uns-ftn", // Faculty of Technical Sciences
+        2 to "uns-ff", // Faculty of Philosophy
+        4 to "uns-pmf", // Faculty of Sciences
+    )
 }
