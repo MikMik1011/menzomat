@@ -18,6 +18,7 @@ import kotlinx.datetime.YearMonth
 import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 
 /** The Android bindings of the shared UI's platform needs. Activity-owned: the share sheet and settings are launched from it. */
 fun androidPlatformServices(activity: Activity): PlatformServices = PlatformServices(
@@ -59,8 +60,19 @@ private class AndroidNfcSettings(private val activity: Activity) : NfcSettings {
     }
 }
 
+/**
+ * The phone's medium date style, except in Serbian: the standard pattern there is "10. 11. 2003." with a
+ * space after each dot, while Serbian documents and cards write "10.11.2003.".
+ */
+internal fun mediumDateFormatter(locale: Locale): DateTimeFormatter =
+    if (locale.language == "sr") {
+        DateTimeFormatter.ofPattern("d.M.yyyy.", locale)
+    } else {
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
+    }
+
 private class AndroidDateFormatter : DateFormatter {
-    private val medium = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+    private val medium = mediumDateFormatter(Locale.getDefault())
     private val monthYear = DateTimeFormatter.ofPattern("LLLL yyyy")
 
     override fun mediumDate(date: LocalDate): String = medium.format(date.toJavaLocalDate())
