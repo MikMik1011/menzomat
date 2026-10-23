@@ -158,7 +158,7 @@ class NoviSadProfileTest {
     }
 
     @Test
-    fun `a file the card refused to read carries the card's reason`() {
+    fun `a file the card refused to read carries the reason the card gave`() {
         val card = decode(currentCard.with(8 to null))
         assertEquals(
             listOf(DecodeWarning("0x08", WarningReason.Unreadable("Permission denied (0x9D)"))),

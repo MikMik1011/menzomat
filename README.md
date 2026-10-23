@@ -1,80 +1,53 @@
 # Menzomat
 
-Kotlin Multiplatform app (Compose Multiplatform, Material 3 Expressive, ISIC colors) that reads a student canteen card over NFC and shows meal balance, cash balance, validity and the rest of what is on it. It runs on Android today; the shared module is set up so an iOS app can be added later.
+Read your student canteen card with your phone. Hold the card against the back of an NFC phone and see how many breakfasts, lunches and dinners you have left, your cash balance, your last transaction, when the card was issued and the rest of what is stored on it.
 
-Only the **University of Novi Sad** card is supported so far, but one app is meant to hold every university: a card is read once into a generic `CardDump`, and any *profile* can then decode that dump. The profile is auto-detected and can be switched in the app at any time without tapping the card again.
+It runs on Android today. It is built with Kotlin Multiplatform and Compose Multiplatform (Material 3 Expressive, in the ISIC brand colors), so an iOS app can follow. Only the **University of Novi Sad** card is supported so far, but the app is built so other universities can be added.
 
-## Build
+## What it shows
+
+- Meals left this month, how many can still be bought, and meals already bought for next month
+- Cash balance and the last transaction
+- Name, faculty, year of study, index number, card number, and the issue and expiry dates
+- A few extras, such as the last medical check-up and the transaction counter
+- The raw data exactly as read from the card, to copy or share (useful for adding a new kind of card)
+
+Serbian and English, light and dark theme, and optionally the colors of your wallpaper.
+
+## How it works
+
+1. **One tap reads everything.** The card is a MIFARE DESFire EV3, and the canteen data on it is readable without a key. The phone reads every application and file the card allows into a generic dump.
+2. **A profile decodes it.** Each university has a *profile* that knows how that university lays out its card. A profile scores a dump (does this look like my card?) and decodes it into meals, balances and dates. The app picks the best match by itself, and you can switch the profile in the app at any time. The saved dump is decoded again, so you do not have to tap the card again.
+3. **The screen shows the result.** The last card you read is kept on the phone, so you can look at it without the card.
+
+## The card
+
+How the Novi Sad card is laid out, and how it was reverse engineered, is written up in this gist: **[Reverse engineered UNS ISIC cards data](https://gist.github.com/MikMik1011/0a923f203c2ce98c4b5bf1537de42fe7)**.
+
+The short version: DESFire application `0x0D0000` with files `0x00` to `0x0A`, all free to read. Meals, balances and dates are plain binary and one terminal-software quirk (months counted from 0 on older terminals, from 1 on newer) is handled per card.
+
+File `0x00` also holds the holder's national id (JMBG). The app deliberately leaves it out and never decodes or shows it, though it is still in the raw data, which is the card exactly as read.
+
+## Privacy
+
+Nothing leaves your phone. The app asks for the NFC permission and nothing else, so it cannot reach the internet. The last card read is stored on the phone only and is left out of backups. Sharing or copying the raw data is something you do yourself.
+
+## Build and run
+
+You need JDK 17, the Android SDK (`local.properties` with `sdk.dir`), and a phone with NFC. Emulators have no NFC.
 
 ```sh
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (85)
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installDebug      # install on a connected phone (needs NFC)
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installBenchmark  # release build signed with the debug key; judge scrolling and animation on this one
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:compileCommonMainKotlinMetadata   # proves commonMain uses only common APIs
+./gradlew :shared:testAndroidHostTest      # unit tests
+./gradlew :androidApp:installDebug         # install on a connected phone
+./gradlew :androidApp:installBenchmark     # release build signed with the debug key
 ```
 
-Debug builds run Compose several times slower (about 15% janky frames while scrolling on a Pixel 7, against 0% in the benchmark build), so do not judge smoothness on them.
-
-Needs the Android SDK (`local.properties` → `sdk.dir`), JDK 17, and a phone with NFC; emulators have no NFC. AGP is pinned to 9.3.0 to match Android Studio. The Compose Multiplatform Material3 is an alpha because the stable one lacks the Expressive APIs.
-
-## Structure
-
-```
-shared/                         Kotlin Multiplatform library
-  src/commonMain/kotlin/st/misa/menzomat/
-    MenzomatApp.kt              the whole UI entry point; an app passes in PlatformServices
-    card/                       the one feature: read a card and show it
-      domain/   model/ nfc/ profile/ repository/    what the app is about; interfaces and models
-      data/     local/ preferences/ profile/<university>/   DataStore storage, card layouts, DefaultCardRepository
-      presentation/card/        CardScreen, CardViewModel, CardUiState, components/
-      presentation/settings/    SettingsScreen, SettingsViewModel
-    core/                       generic code the feature builds on
-      domain/desfire/  Aid, CardDump, DesfireClient, Transceiver, DesfireError
-      domain/util/     ByteCursor, date helpers, Windows-1250 table
-      data/desfire/    IsoDesfireClient, CardDumper
-    di/                         Koin: sharedModule
-    ui/                         theme/ (ISIC brand scheme), components/, platform/ (what each platform provides)
-  src/commonMain/composeResources/   strings (Serbian Latin default, values-en)
-  src/commonTest/                    unit tests; fakes in the `fake` package
-  src/androidMain/                   AndroidNfcReader, Android platform services, Koin androidPlatformModule
-  src/androidHostTest/               tests that need the JVM (Windows-1250 table vs the real charset)
-androidApp/                     MainActivity, MenzomatApplication (starts Koin), manifest, launcher icon, UI tests
-```
-
-Dependencies point inwards: `presentation → domain ← data`, and everything may use `core` and `ui`. Nothing in `domain` or `core/domain` may import from `data` or `presentation`.
-
-Everything in `commonMain` is plain common Kotlin. What genuinely differs per platform is behind small interfaces (one per capability) that each app provides:
-
-| Interface | Android binding |
-|---|---|
-| `NfcReader` / `NfcTag` | `AndroidNfcReader` (reader mode while the activity is in the foreground) |
-| `ShareSheet`, `TextClipboard`, `NfcSettings` | `androidPlatformServices(activity)` |
-| `DateFormatter`, `ThemePlatform` | same file; locale dates, wallpaper colors, reduced motion |
-| `PreferencesPath`, IO dispatcher | `androidPlatformModule` |
-
-## UI copy
-
-Labels only: no taglines, helper text or secondary descriptions. If a screen needs them to make sense, change the layout (alignment, icons, grouping, dimming) instead. A value that sits next to a label does not need a title over the group, and a state that has an icon and a title does not need a sentence. Anything that is only an icon or a number still gets a content description, so screen readers (and UI-driving agents) read the sentence that sighted users infer. Text the user reads lives in the string resources, in both languages (a test fails when the two files drift apart); models carry data and keys, such as `ExtraField.key` or `WarningReason`, and the UI words them. Two kept on purpose: the personal-data warning next to Share/Copy, and the detail in "Error talking to the card".
+Judge scrolling and animation on the benchmark build: debug builds run Compose several times slower.
 
 ## Adding a university
 
-1. Add `card/data/profile/<name>/<Name>Profile.kt` in `shared/src/commonMain` (copy `novisad/`): an `internal class … : CardProfile`, and keep the file ids and sizes in a `<Name>Layout` object next to it.
-   - `score(dump)` says how much a dump looks like this university's card (0 = not at all).
-   - `decode(dump)` fills a `StudentCard`; it must never throw. Put anything university-specific into `extras`.
-2. Add it to the profile list in `di/SharedModule.kt`.
-3. Test it against dumps of real cards: the app's "Raw data" section exports a dump as JSON. Put anonymized fixtures next to the test, like `novisad/Fixtures.kt`.
+A university is one profile class and one line in the dependency setup; the app then detects it and offers it in the profile picker. [CLAUDE.md](CLAUDE.md) has the checklist, the project layout and the conventions.
 
-## Adding iOS later
+## License
 
-The iOS targets (`iosArm64`, `iosSimulatorArm64`) are already declared in `shared/build.gradle.kts` and are only built on macOS (`kotlin.native.ignoreDisabledTargets=true` skips them elsewhere). Nothing iOS-specific exists yet. To add the app:
-
-1. In `shared/src/iosMain`: an `IosNfcReader` (Core NFC `NFCTagReaderSession`; iOS scans only on request, so `NfcReader` will probably need a way to start a scan from a button), an `iosPlatformModule` (IO dispatcher, `PreferencesPath`, the reader), and iOS versions of `ShareSheet`, `TextClipboard`, `NfcSettings`, `DateFormatter` and `ThemePlatform`.
-2. A `MainViewController()` that starts Koin and returns `ComposeUIViewController { MenzomatApp(platform) }`.
-3. An `iosApp/` Xcode project: a SwiftUI shell hosting that controller, an `Info.plist` with `NFCReaderUsageDescription`, and the NFC tag-reading entitlement.
-4. Check on a real iPhone that Core NFC can send the DESFire commands this app uses (list applications, select, list files, read data) before building more.
-
-## Card format (Novi Sad)
-
-DESFire application `0x0D0000` (as shown by TagInfo; `0D 00 00` on the wire), files `0x00`–`0x0A`, all readable without a key. That includes the value file `0x03`, the transaction counter, even though TagInfo lists its read key as blocked.
-The byte layout is documented in code in `card/data/profile/novisad/NoviSadProfile.kt` (file ids in `NoviSadLayout.kt`) and was derived from TagInfo dumps of real cards. File 0x00 also holds the holder's national id (JMBG); the app deliberately leaves it out and never decodes or shows it, though it is still in the raw data, which is the card exactly as read.
-Terminals before 2026 stored months of the last transaction (and of the card number validity) 0-based, newer ones store them 1-based; the profile resolves this per card.
+[GNU AGPL-3.0](LICENSE)

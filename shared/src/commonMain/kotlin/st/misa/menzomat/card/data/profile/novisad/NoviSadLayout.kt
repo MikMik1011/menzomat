@@ -2,7 +2,7 @@ package st.misa.menzomat.card.data.profile.novisad
 
 import st.misa.menzomat.core.domain.desfire.Aid
 
-/** Where things live on a University of Novi Sad canteen card. Reverse engineered; see the repo plan. */
+/** Where things live on a University of Novi Sad canteen card. Reverse engineered: https://gist.github.com/MikMik1011/0a923f203c2ce98c4b5bf1537de42fe7 */
 internal object NoviSadLayout {
     /**
      * TagInfo prints the application id in wire order (0D 00 00); the numeric id is 0x00000D.

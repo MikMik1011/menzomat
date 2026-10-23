@@ -18,7 +18,7 @@ class ExtraLabelsTest {
     }
 
     @Test
-    fun `an extra the app does not know keeps the profile's own label`() {
+    fun `an extra the app does not know keeps the label the profile gave`() {
         assertNull(knownExtraLabel("something-new"))
     }
 }
