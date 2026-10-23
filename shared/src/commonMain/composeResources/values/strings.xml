@@ -38,15 +38,6 @@
     <string name="meals_left_to_buy">Još za kupovinu: %1$s</string>
     <string name="meals_next_month">Za sledeći mesec: %1$s</string>
 
-    <string name="validity_valid">Važi do %1$s</string>
-    <plurals name="validity_expires_in_days">
-        <item quantity="one">Ističe za %1$d dan</item>
-        <item quantity="few">Ističe za %1$d dana</item>
-        <item quantity="other">Ističe za %1$d dana</item>
-    </plurals>
-    <string name="validity_expired">Istekla %1$s</string>
-    <string name="validity_not_validated">Nije overena</string>
-
     <string name="cash_label">Novčano stanje</string>
     <string name="cash_value">%1$d RSD</string>
     <string name="last_transaction_label">Poslednja transakcija</string>

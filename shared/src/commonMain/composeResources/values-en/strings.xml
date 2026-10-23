@@ -38,14 +38,6 @@
     <string name="meals_left_to_buy">Left to buy: %1$s</string>
     <string name="meals_next_month">For next month: %1$s</string>
 
-    <string name="validity_valid">Valid until %1$s</string>
-    <plurals name="validity_expires_in_days">
-        <item quantity="one">Expires in %1$d day</item>
-        <item quantity="other">Expires in %1$d days</item>
-    </plurals>
-    <string name="validity_expired">Expired %1$s</string>
-    <string name="validity_not_validated">Not validated</string>
-
     <string name="cash_label">Cash balance</string>
     <string name="cash_value">%1$d RSD</string>
     <string name="last_transaction_label">Last transaction</string>

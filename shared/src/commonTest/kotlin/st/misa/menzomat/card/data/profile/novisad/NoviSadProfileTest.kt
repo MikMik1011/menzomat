@@ -28,7 +28,7 @@ class NoviSadProfileTest {
         assertEquals("212503034", card.cardNumber)
 
         assertEquals("Univerzitet u Novom Sadu", card.institution?.name)
-        assertEquals(3, card.institution?.studyYear)
+        assertEquals(4, card.institution?.studyYear, "renewed card: one more than the 3 written in file 0x07")
         assertEquals("209/22", card.institution?.studentId)
 
         assertEquals(LocalDate(2024, 10, 22), card.validity?.issuedOn)
@@ -86,6 +86,18 @@ class NoviSadProfileTest {
         // Balance month 10, transaction month 09: zero based would be 30 Oct, after the read date.
         val card = decode(currentCard.with(4 to "1e091a000100"))
         assertEquals(LocalDate(2026, 9, 30), card.lastTransaction?.date)
+    }
+
+    @Test
+    fun `a card that was not renewed shows the year written on it`() {
+        val card = decode(currentCard.with(6 to padded("160a18 160a18 00 010100", 24)))
+        assertEquals(3, card.institution?.studyYear)
+    }
+
+    @Test
+    fun `a card whose renewal file cannot be read shows the year written on it`() {
+        val card = decode(currentCard.with(6 to null))
+        assertEquals(3, card.institution?.studyYear)
     }
 
     @Test
