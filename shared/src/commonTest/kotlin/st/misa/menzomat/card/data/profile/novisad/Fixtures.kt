@@ -19,8 +19,7 @@ fun padded(bytes: String, size: Int): String {
 fun text(value: String): String = value.encodeToByteArray().let { it.size.toString(16).padStart(2, '0') + it.toHexString() }
 
 /** File 0x00 with made-up personal data; the real dumps are never committed. */
-fun nameFile(first: String = "ANA", last: String = "ANIC", jmbg: String = "0101990123456") =
-    padded(text(first) + text(last) + text(jmbg), 256)
+fun nameFile(first: String = "ANA", last: String = "ANIC") = padded(text(first) + text(last), 256)
 
 /**
  * A card as TagInfo dumped it on 13 Oct 2026 (personal data replaced, everything else byte-exact).

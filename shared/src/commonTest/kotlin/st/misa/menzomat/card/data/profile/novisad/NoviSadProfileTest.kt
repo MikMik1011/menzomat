@@ -24,7 +24,6 @@ class NoviSadProfileTest {
 
         assertEquals("ANA", card.holder?.firstName)
         assertEquals("ANIC", card.holder?.lastName)
-        assertEquals("0101990123456", card.holder?.nationalId)
         assertEquals("212503034", card.cardNumber)
 
         assertEquals("Univerzitet u Novom Sadu", card.institution?.name)
@@ -124,7 +123,7 @@ class NoviSadProfileTest {
     @Test
     fun `names in windows 1250 are recovered`() {
         val first = "8a" // Š in windows-1250, invalid as utf-8
-        val file = padded("01$first 02" + "4141" + " 0d" + "0101990123456".toByteArray().toHexString(), 256)
+        val file = padded("01$first 02" + "4141", 256)
         val card = decode(currentCard.with(0 to file))
         assertEquals("Š", card.holder?.firstName)
         assertEquals("AA", card.holder?.lastName)

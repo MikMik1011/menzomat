@@ -48,9 +48,6 @@
     <string name="card_number">Card number</string>
     <string name="issued_on">Issued</string>
     <string name="card_valid_until">Card valid until</string>
-    <string name="national_id">National ID (JMBG)</string>
-    <string name="national_id_show">Show national ID</string>
-    <string name="national_id_hide">Hide national ID</string>
 
     <string name="warnings_title">Some fields could not be read</string>
     <string name="warning_line">%1$s: %2$s</string>
@@ -62,7 +59,7 @@
     <string name="raw_file">File 0x%1$s · %2$s · %3$d B</string>
     <string name="raw_file_unknown_size">File 0x%1$s · %2$s</string>
     <string name="raw_file_error">File 0x%1$s not read: %2$s</string>
-    <string name="raw_privacy">The exported record contains personal data (name, national ID).</string>
+    <string name="raw_privacy">The exported record contains personal data.</string>
     <string name="raw_share">Share</string>
     <string name="raw_copy">Copy</string>
     <string name="dump_copied">Copied</string>

@@ -48,9 +48,6 @@
     <string name="card_number">Broj kartice</string>
     <string name="issued_on">Izdata</string>
     <string name="card_valid_until">Kartica važi do</string>
-    <string name="national_id">JMBG</string>
-    <string name="national_id_show">Prikaži JMBG</string>
-    <string name="national_id_hide">Sakrij JMBG</string>
 
     <string name="warnings_title">Neka polja nisu pročitana</string>
     <string name="warning_line">%1$s: %2$s</string>
@@ -62,7 +59,7 @@
     <string name="raw_file">Fajl 0x%1$s · %2$s · %3$d B</string>
     <string name="raw_file_unknown_size">Fajl 0x%1$s · %2$s</string>
     <string name="raw_file_error">Fajl 0x%1$s nije pročitan: %2$s</string>
-    <string name="raw_privacy">Izvezeni zapis sadrži lične podatke (ime, JMBG).</string>
+    <string name="raw_privacy">Izvezeni zapis sadrži lične podatke.</string>
     <string name="raw_share">Podeli</string>
     <string name="raw_copy">Kopiraj</string>
     <string name="dump_copied">Kopirano</string>

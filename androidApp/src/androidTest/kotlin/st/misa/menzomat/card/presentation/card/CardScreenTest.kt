@@ -58,7 +58,7 @@ class CardScreenTest {
     private val candidates = listOf(ProfileCandidate(uns, 100), ProfileCandidate(other, 0))
 
     private val card = StudentCard(
-        holder = Holder("Ana", "Anić", "0101990123456"),
+        holder = Holder("Ana", "Anić"),
         cardNumber = "212503034",
         institution = Institution("Univerzitet u Novom Sadu", studyYear = 3, studentId = "209/22"),
         meals = MealBalance(breakfast = 1, lunch = 0, dinner = 2),

@@ -7,7 +7,7 @@ Only the **University of Novi Sad** card is supported so far, but one app is mea
 ## Build
 
 ```sh
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (79)
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:testAndroidHostTest   # unit tests (76)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installDebug      # install on a connected phone (needs NFC)
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :androidApp:installBenchmark  # release build signed with the debug key; judge scrolling and animation on this one
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk ./gradlew :shared:compileCommonMainKotlinMetadata   # proves commonMain uses only common APIs
@@ -76,4 +76,5 @@ The iOS targets (`iosArm64`, `iosSimulatorArm64`) are already declared in `share
 ## Card format (Novi Sad)
 
 DESFire application `0x0D0000` (as shown by TagInfo; `0D 00 00` on the wire), files `0x00`–`0x0A`, all readable without a key. That includes the value file `0x03`, the transaction counter, even though TagInfo lists its read key as blocked.
-The byte layout is documented in code in `card/data/profile/novisad/NoviSadProfile.kt` (file ids in `NoviSadLayout.kt`) and was derived from TagInfo dumps of real cards. Terminals before 2026 stored months of the last transaction (and of the card number validity) 0-based, newer ones store them 1-based; the profile resolves this per card.
+The byte layout is documented in code in `card/data/profile/novisad/NoviSadProfile.kt` (file ids in `NoviSadLayout.kt`) and was derived from TagInfo dumps of real cards. File 0x00 also holds the holder's national id (JMBG); the app deliberately leaves it out and never decodes or shows it, though it is still in the raw data, which is the card exactly as read.
+Terminals before 2026 stored months of the last transaction (and of the card number validity) 0-based, newer ones store them 1-based; the profile resolves this per card.

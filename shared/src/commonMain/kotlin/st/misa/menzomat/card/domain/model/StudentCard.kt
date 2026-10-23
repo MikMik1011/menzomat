@@ -22,7 +22,6 @@ data class StudentCard(
 data class Holder(
     val firstName: String?,
     val lastName: String?,
-    val nationalId: String?,
 )
 
 data class Institution(

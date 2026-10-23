@@ -45,7 +45,7 @@ internal class NoviSadProfile : CardProfile {
 
         val holder = scope.readFile(app, NoviSadLayout.HOLDER) { data ->
             val cursor = ByteCursor(data)
-            Holder(cursor.lengthPrefixedText(), cursor.lengthPrefixedText(), cursor.lengthPrefixedText())
+            Holder(cursor.lengthPrefixedText(), cursor.lengthPrefixedText())
         }
 
         val cardFile = scope.readFile(app, NoviSadLayout.CARD_NUMBER) { data ->
