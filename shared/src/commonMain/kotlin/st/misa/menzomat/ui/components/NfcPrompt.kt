@@ -7,7 +7,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,12 +28,11 @@ import androidx.compose.ui.unit.dp
 import st.misa.menzomat.ui.theme.LocalReducedMotion
 import st.misa.menzomat.ui.theme.spacing
 
-/** The "tap your card" hero: a pulsing NFC glyph, or the expressive loading indicator while a read runs. */
+/** The "tap your card" hero: a pulsing NFC glyph, or the expressive loading indicator while a read runs. The glyph and the title say it all. */
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NfcPrompt(
     title: String,
-    subtitle: String,
     isReading: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -55,8 +53,6 @@ fun NfcPrompt(
                 PulsingNfcIcon()
             }
             Text(title, style = MaterialTheme.typography.headlineSmall, textAlign = TextAlign.Center)
-            Text(subtitle, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
-            Spacer(Modifier.size(MaterialTheme.spacing.extraSmall))
         }
     }
 }

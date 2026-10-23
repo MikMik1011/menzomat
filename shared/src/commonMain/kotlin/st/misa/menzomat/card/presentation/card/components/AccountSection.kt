@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.StudentCard
 import st.misa.menzomat.shared.resources.Res
-import st.misa.menzomat.shared.resources.account_title
 import st.misa.menzomat.shared.resources.cash_label
 import st.misa.menzomat.shared.resources.cash_value
 import st.misa.menzomat.shared.resources.last_transaction_label
@@ -28,7 +27,7 @@ import st.misa.menzomat.shared.resources.meals_lunch
 import st.misa.menzomat.shared.resources.transaction_purchase
 import st.misa.menzomat.shared.resources.transaction_with_date
 import st.misa.menzomat.ui.components.InfoRow
-import st.misa.menzomat.ui.components.SectionCard
+import st.misa.menzomat.ui.components.InfoCard
 import st.misa.menzomat.ui.platform.LocalPlatformServices
 import st.misa.menzomat.ui.theme.brand
 
@@ -37,7 +36,7 @@ internal fun AccountSection(card: StudentCard) {
     val cash = card.cashBalanceRsd
     val transaction = card.lastTransaction
     if (cash == null && transaction == null) return
-    SectionCard(stringResource(Res.string.account_title)) {
+    InfoCard {
         cash?.let {
             InfoRow(
                 label = stringResource(Res.string.cash_label),

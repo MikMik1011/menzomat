@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.shared.resources.Res
-import st.misa.menzomat.shared.resources.nfc_unavailable_body
 import st.misa.menzomat.shared.resources.nfc_unavailable_title
 import st.misa.menzomat.ui.theme.spacing
 
@@ -26,7 +25,6 @@ internal fun NfcUnavailableCard() {
     ) {
         Column(Modifier.padding(MaterialTheme.spacing.medium), verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)) {
             Text(stringResource(Res.string.nfc_unavailable_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(Res.string.nfc_unavailable_body), style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

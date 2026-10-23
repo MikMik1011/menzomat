@@ -19,7 +19,6 @@ import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.presentation.card.CardActions
 import st.misa.menzomat.card.presentation.card.CardContent
 import st.misa.menzomat.shared.resources.Res
-import st.misa.menzomat.shared.resources.unrecognized_body
 import st.misa.menzomat.shared.resources.unrecognized_pick
 import st.misa.menzomat.shared.resources.unrecognized_title
 import st.misa.menzomat.ui.theme.spacing
@@ -38,7 +37,6 @@ internal fun UnrecognizedCard(content: CardContent.Unrecognized, actions: CardAc
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.semantics { heading() },
                 )
-                Text(stringResource(Res.string.unrecognized_body), style = MaterialTheme.typography.bodyMedium)
                 OutlinedButton(onClick = onPickProfile) { Text(stringResource(Res.string.unrecognized_pick)) }
             }
         }

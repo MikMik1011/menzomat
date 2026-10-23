@@ -2,10 +2,8 @@ package st.misa.menzomat.card.presentation.card
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -32,10 +30,11 @@ import st.misa.menzomat.shared.resources.error_dismiss
 import st.misa.menzomat.shared.resources.error_tag_lost
 import st.misa.menzomat.shared.resources.meals_breakfast
 import st.misa.menzomat.shared.resources.meals_dinner
+import st.misa.menzomat.shared.resources.meals_left_to_buy
+import st.misa.menzomat.shared.resources.meals_line
 import st.misa.menzomat.shared.resources.meals_lunch
 import st.misa.menzomat.shared.resources.nfc_disabled_action
 import st.misa.menzomat.shared.resources.profile_auto
-import st.misa.menzomat.shared.resources.profile_chip_auto
 import st.misa.menzomat.shared.resources.profile_low_confidence
 import st.misa.menzomat.shared.resources.prompt_title
 import st.misa.menzomat.shared.resources.reading_title
@@ -123,6 +122,15 @@ class CardScreenTest {
     }
 
     @Test
+    fun leftToBuyIsAnnouncedWithoutAVisibleSentence() {
+        val withLeftToBuy = card.copy(mealsLeftToBuy = MealBalance(breakfast = 31, lunch = 28, dinner = 21))
+        show(CardUiState(isLoaded = true, content = decoded().copy(card = withLeftToBuy)))
+
+        val summary = string(Res.string.meals_line, 31, 28, 21)
+        rule.onNodeWithContentDescription(string(Res.string.meals_left_to_buy, summary)).assertIsDisplayed()
+    }
+
+    @Test
     fun idleCardAsksToTapTheCard() {
         show(CardUiState(isLoaded = true))
         rule.onNodeWithText(string(Res.string.prompt_title)).assertIsDisplayed()
@@ -131,8 +139,7 @@ class CardScreenTest {
     @Test
     fun readingStateReplacesThePrompt() {
         show(CardUiState(isLoaded = true, isReading = true))
-        // The title and the app bar subtitle both say it.
-        rule.onAllNodesWithText(string(Res.string.reading_title)).assertCountEquals(2)
+        rule.onNodeWithText(string(Res.string.reading_title)).assertIsDisplayed()
         rule.onNodeWithText(string(Res.string.prompt_title)).assertDoesNotExist()
     }
 
@@ -141,7 +148,7 @@ class CardScreenTest {
         val actions = RecordingActions()
         show(CardUiState(isLoaded = true, content = decoded()), actions)
 
-        rule.onNodeWithText(string(Res.string.profile_chip_auto, "UNS")).performClick()
+        rule.onNodeWithText("UNS").performClick()
         rule.onNodeWithText(other.name).performClick()
 
         assertEquals(listOf<ProfileSelection>(ProfileSelection.Manual("bg")), actions.selections)

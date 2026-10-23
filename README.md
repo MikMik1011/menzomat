@@ -49,6 +49,10 @@ Everything in `commonMain` is plain common Kotlin. What genuinely differs per pl
 | `DateFormatter`, `ThemePlatform` | same file; locale dates, wallpaper colors, reduced motion |
 | `PreferencesPath`, IO dispatcher | `androidPlatformModule` |
 
+## UI copy
+
+Labels only: no taglines, helper text or secondary descriptions. If a screen needs them to make sense, change the layout (alignment, icons, grouping, dimming) instead. A value that sits next to a label does not need a title over the group, and a state that has an icon and a title does not need a sentence. Anything that is only an icon or a number still gets a content description, so screen readers (and UI-driving agents) read the sentence that sighted users infer. Two kept on purpose: the personal-data warning next to Share/Copy, and the detail in "Error talking to the card".
+
 ## Adding a university
 
 1. Add `card/data/profile/<name>/<Name>Profile.kt` in `shared/src/commonMain` (copy `novisad/`): an `internal class … : CardProfile`, and keep the file ids and sizes in a `<Name>Layout` object next to it.

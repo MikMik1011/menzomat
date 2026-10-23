@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.nfc_disabled_action
-import st.misa.menzomat.shared.resources.nfc_disabled_body
 import st.misa.menzomat.shared.resources.nfc_disabled_title
 import st.misa.menzomat.ui.theme.spacing
 
@@ -28,7 +27,6 @@ internal fun NfcDisabledCard(onTurnOn: () -> Unit) {
     ) {
         Column(Modifier.padding(MaterialTheme.spacing.medium), verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.small)) {
             Text(stringResource(Res.string.nfc_disabled_title), style = MaterialTheme.typography.titleMedium)
-            Text(stringResource(Res.string.nfc_disabled_body), style = MaterialTheme.typography.bodyMedium)
             Button(onClick = onTurnOn) { Text(stringResource(Res.string.nfc_disabled_action)) }
         }
     }

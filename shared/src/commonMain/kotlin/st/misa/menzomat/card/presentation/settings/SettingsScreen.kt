@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -18,7 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -39,19 +37,16 @@ import org.koin.compose.viewmodel.koinViewModel
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.ThemeMode
 import st.misa.menzomat.shared.resources.Res
-import st.misa.menzomat.shared.resources.settings_about_body
-import st.misa.menzomat.shared.resources.settings_about_section
 import st.misa.menzomat.shared.resources.settings_back
 import st.misa.menzomat.shared.resources.settings_dynamic_color
-import st.misa.menzomat.shared.resources.settings_dynamic_color_summary
 import st.misa.menzomat.shared.resources.settings_profile_auto
-import st.misa.menzomat.shared.resources.settings_profile_auto_summary
 import st.misa.menzomat.shared.resources.settings_profile_section
 import st.misa.menzomat.shared.resources.settings_theme_dark
 import st.misa.menzomat.shared.resources.settings_theme_light
 import st.misa.menzomat.shared.resources.settings_theme_section
 import st.misa.menzomat.shared.resources.settings_theme_system
 import st.misa.menzomat.shared.resources.settings_title
+import st.misa.menzomat.ui.components.ChoiceRow
 import st.misa.menzomat.ui.components.SectionHeader
 import st.misa.menzomat.ui.theme.contentMaxWidth
 import st.misa.menzomat.ui.platform.LocalPlatformServices
@@ -105,7 +100,6 @@ fun SettingsScreen(
             ) {
                 ProfileSection(state, actions)
                 ThemeSection(state, actions)
-                AboutSection()
             }
         }
     }
@@ -117,14 +111,12 @@ private fun ProfileSection(state: SettingsUiState, actions: SettingsActions) {
     SectionTitle(stringResource(Res.string.settings_profile_section))
     ChoiceRow(
         title = stringResource(Res.string.settings_profile_auto),
-        summary = stringResource(Res.string.settings_profile_auto_summary),
         selected = selection is ProfileSelection.Auto,
         onClick = { actions.onSelectProfile(ProfileSelection.Auto) },
     )
     state.profiles.forEach { profile ->
         ChoiceRow(
             title = profile.name,
-            summary = null,
             selected = (selection as? ProfileSelection.Manual)?.profileId == profile.id,
             onClick = { actions.onSelectProfile(ProfileSelection.Manual(profile.id)) },
         )
@@ -156,7 +148,6 @@ private fun ThemeSection(state: SettingsUiState, actions: SettingsActions) {
                 onValueChange = actions::onToggleDynamicColor,
             ),
             headlineContent = { Text(stringResource(Res.string.settings_dynamic_color)) },
-            supportingContent = { Text(stringResource(Res.string.settings_dynamic_color_summary)) },
             trailingContent = { Switch(checked = state.settings.useDynamicColor, onCheckedChange = null) },
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
         )
@@ -164,28 +155,6 @@ private fun ThemeSection(state: SettingsUiState, actions: SettingsActions) {
 }
 
 @Composable
-private fun AboutSection() {
-    SectionTitle(stringResource(Res.string.settings_about_section))
-    Text(
-        text = stringResource(Res.string.settings_about_body),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.medium),
-    )
-}
-
-@Composable
 private fun SectionTitle(text: String) {
     SectionHeader(text, Modifier.padding(horizontal = MaterialTheme.spacing.medium, vertical = MaterialTheme.spacing.small))
-}
-
-@Composable
-private fun ChoiceRow(title: String, summary: String?, selected: Boolean, onClick: () -> Unit) {
-    ListItem(
-        modifier = Modifier.selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
-        headlineContent = { Text(title) },
-        supportingContent = summary?.let { { Text(it) } },
-        trailingContent = { RadioButton(selected = selected, onClick = null) },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-    )
 }

@@ -4,45 +4,33 @@
     <!-- Card -->
     <string name="card_title">Menzomat</string>
     <string name="action_settings">Podešavanja</string>
-    <string name="subtitle_ready">Prisloni karticu uz zadnju stranu telefona</string>
-    <string name="subtitle_reading">Čitanje kartice…</string>
 
     <string name="prompt_title">Prisloni karticu</string>
-    <string name="prompt_subtitle">Drži karticu uz zadnju stranu telefona dok se ne pročita.</string>
     <string name="reading_title">Čitanje kartice…</string>
-    <string name="reading_subtitle">Ne pomeraj karticu.</string>
 
     <string name="nfc_disabled_title">NFC je isključen</string>
-    <string name="nfc_disabled_body">Uključi NFC da bi mogao da pročitaš karticu.</string>
     <string name="nfc_disabled_action">Uključi NFC</string>
     <string name="nfc_unavailable_title">NFC nije dostupan</string>
-    <string name="nfc_unavailable_body">Ovaj uređaj nema NFC čitač.</string>
 
-    <string name="error_tag_lost">Veza sa karticom je prekinuta. Drži karticu mirno uz telefon dok se čita.</string>
+    <string name="error_tag_lost">Veza sa karticom je prekinuta.</string>
     <string name="error_not_desfire">Ovo nije MIFARE DESFire kartica.</string>
     <string name="error_no_apps">Na kartici nema podataka koji se mogu pročitati.</string>
     <string name="error_communication">Greška u komunikaciji sa karticom: %1$s</string>
     <string name="error_communication_unknown">Greška u komunikaciji sa karticom.</string>
     <string name="error_dismiss">Zatvori</string>
 
-    <string name="profile_chip_auto">%1$s · auto</string>
     <string name="profile_chip_none">Profil</string>
     <string name="profile_picker_title">Profil kartice</string>
     <string name="profile_auto">Automatski</string>
-    <string name="profile_auto_summary">Prepoznaj univerzitet po kartici</string>
-    <string name="profile_match">Podudaranje %1$d%</string>
-    <string name="profile_no_match">Ne liči na ovu karticu</string>
-    <string name="profile_low_confidence">Kartica ne liči na profil „%1$s“. Prikaz može biti netačan.</string>
+    <string name="profile_low_confidence">Kartica ne liči na profil „%1$s“.</string>
     <string name="profile_close">Zatvori</string>
 
     <string name="unrecognized_title">Kartica nije prepoznata</string>
-    <string name="unrecognized_body">Ova kartica ne liči ni na jedan poznati profil. Možeš da probaš ručno, ili da izvezeš sirove podatke.</string>
     <string name="unrecognized_pick">Probaj sa profilom…</string>
 
     <string name="holder_unknown">Nepoznat korisnik</string>
     <string name="study_year">%1$d. godina</string>
 
-    <string name="meals_title">Stanje obroka</string>
     <string name="meals_breakfast">Doručak</string>
     <string name="meals_lunch">Ručak</string>
     <string name="meals_dinner">Večera</string>
@@ -59,7 +47,6 @@
     <string name="validity_expired">Istekla %1$s</string>
     <string name="validity_not_validated">Nije overena</string>
 
-    <string name="account_title">Račun</string>
     <string name="cash_label">Novčano stanje</string>
     <string name="cash_value">%1$d RSD</string>
     <string name="last_transaction_label">Poslednja transakcija</string>
@@ -67,17 +54,13 @@
     <string name="transaction_with_date">%1$s · %2$s</string>
     <string name="meal_times">%1$s ×%2$d</string>
 
-    <string name="details_title">Kartica</string>
     <string name="card_number">Broj kartice</string>
     <string name="issued_on">Izdata</string>
-    <string name="validated_until">Overena do</string>
-    <string name="not_validated">Nije overena</string>
     <string name="card_valid_until">Kartica važi do</string>
     <string name="national_id">JMBG</string>
     <string name="national_id_show">Prikaži JMBG</string>
     <string name="national_id_hide">Sakrij JMBG</string>
 
-    <string name="extras_title">Ostalo</string>
     <string name="warnings_title">Neka polja nisu pročitana</string>
     <string name="warning_line">%1$s: %2$s</string>
 
@@ -99,15 +82,11 @@
 
     <string name="settings_profile_section">Profil kartice</string>
     <string name="settings_profile_auto">Automatski</string>
-    <string name="settings_profile_auto_summary">Prepoznaj univerzitet po kartici</string>
 
     <string name="settings_theme_section">Tema</string>
     <string name="settings_theme_system">Sistemska</string>
     <string name="settings_theme_light">Svetla</string>
     <string name="settings_theme_dark">Tamna</string>
     <string name="settings_dynamic_color">Boje sa pozadine</string>
-    <string name="settings_dynamic_color_summary">Umesto ISIC boja koristi boje sa pozadine telefona</string>
 
-    <string name="settings_about_section">O aplikaciji</string>
-    <string name="settings_about_body">Menzomat čita podatke sa menza kartice isključivo na telefonu. Ništa se ne šalje na internet, a poslednje pročitano stanje čuva se samo na ovom uređaju.</string>
 </resources>

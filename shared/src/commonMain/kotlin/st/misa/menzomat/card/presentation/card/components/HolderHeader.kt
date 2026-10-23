@@ -30,8 +30,5 @@ internal fun HolderHeader(card: StudentCard) {
     Column(Modifier.padding(horizontal = MaterialTheme.spacing.small)) {
         Text(name, style = MaterialTheme.typography.headlineMedium, modifier = Modifier.semantics { heading() })
         if (details.isNotBlank()) Text(details, style = MaterialTheme.typography.titleMedium)
-        institution?.let {
-            Text(it.name, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
     }
 }

@@ -47,10 +47,7 @@ import st.misa.menzomat.card.presentation.card.components.UnrecognizedCard
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.action_settings
 import st.misa.menzomat.shared.resources.card_title
-import st.misa.menzomat.shared.resources.profile_chip_auto
 import st.misa.menzomat.shared.resources.profile_chip_none
-import st.misa.menzomat.shared.resources.subtitle_reading
-import st.misa.menzomat.shared.resources.subtitle_ready
 import st.misa.menzomat.ui.theme.contentMaxWidth
 import st.misa.menzomat.ui.theme.spacing
 
@@ -74,10 +71,6 @@ fun CardScreen(
         topBar = {
             LargeFlexibleTopAppBar(
                 title = { Text(stringResource(Res.string.card_title)) },
-                subtitle = {
-                    val subtitle = if (state.isReading) Res.string.subtitle_reading else Res.string.subtitle_ready
-                    Text(stringResource(subtitle))
-                },
                 actions = {
                     ProfileChip(state.content, onClick = { pickerOpen = true })
                     IconButton(onClick = onOpenSettings) {
@@ -88,7 +81,6 @@ fun CardScreen(
                     containerColor = colors.primaryContainer,
                     scrolledContainerColor = colors.primaryContainer,
                     titleContentColor = colors.onPrimaryContainer,
-                    subtitleContentColor = colors.onPrimaryContainer,
                     actionIconContentColor = colors.onPrimaryContainer,
                 ),
                 scrollBehavior = scrollBehavior,
@@ -126,12 +118,7 @@ fun CardScreen(
 @Composable
 private fun ProfileChip(content: CardContent, onClick: () -> Unit) {
     val label = when (content) {
-        is CardContent.Decoded ->
-            if (content.isAuto) {
-                stringResource(Res.string.profile_chip_auto, content.profile.shortName)
-            } else {
-                content.profile.shortName
-            }
+        is CardContent.Decoded -> content.profile.shortName
         is CardContent.Unrecognized -> stringResource(Res.string.profile_chip_none)
         CardContent.Empty -> return
     }
