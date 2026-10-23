@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- The waves are concentric arcs around (42, 54) so the group sits in the middle of the card.
+     ic_launcher_monochrome.xml uses the same geometry; keep the two in step. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
@@ -10,17 +12,17 @@
         android:pathData="M38,36 h32 a8,8 0 0 1 8,8 v20 a8,8 0 0 1 -8,8 h-32 a8,8 0 0 1 -8,-8 v-20 a8,8 0 0 1 8,-8 z" />
     <!-- NFC waves -->
     <path
-        android:pathData="M50,48 A8,8 0 0 1 50,60"
+        android:pathData="M46.95,49.05 A7,7 0 0 1 46.95,58.95"
         android:strokeColor="#A0DCDC"
         android:strokeWidth="3"
         android:strokeLineCap="round" />
     <path
-        android:pathData="M56,44 A14,14 0 0 1 56,64"
+        android:pathData="M51.19,44.81 A13,13 0 0 1 51.19,63.19"
         android:strokeColor="#A0DCDC"
         android:strokeWidth="3"
         android:strokeLineCap="round" />
     <path
-        android:pathData="M62,40 A20,20 0 0 1 62,68"
+        android:pathData="M55.44,40.56 A19,19 0 0 1 55.44,67.44"
         android:strokeColor="#A0DCDC"
         android:strokeWidth="3"
         android:strokeLineCap="round" />

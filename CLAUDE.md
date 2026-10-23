@@ -82,6 +82,7 @@ Rules that came from real cards and from the user:
 - Koin: bind lists with the type spelled out (`get<List<CardProfile>>()`); `SharedModuleTest` resolves the whole graph.
 - Tests touching DataStore use real files, so wait in wall-clock time, not virtual time (see `DefaultCardRepositoryTest`).
 - Versions are pinned in `gradle/libs.versions.toml`. AGP stays at 9.3.0 (Android Studio's maximum). Material3 is an alpha because the stable release lacks the Expressive APIs.
+- The launcher icon has two drawables on purpose: `ic_launcher_foreground.xml` (dark card, light waves) and `ic_launcher_monochrome.xml` for themed icons. The system tints the monochrome layer as one flat shape, so the waves there are cut out of the card; reusing the colored drawable makes them vanish.
 - There is no `iosMain` yet, and `kotlin.native.ignoreDisabledTargets=true` skips the Apple targets off macOS.
 
 ## Adding a university
