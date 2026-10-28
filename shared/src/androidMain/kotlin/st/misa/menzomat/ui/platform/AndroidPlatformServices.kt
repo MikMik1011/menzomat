@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import androidx.activity.ComponentActivity
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -21,9 +22,10 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 /** The Android bindings of the shared UI's platform needs. Activity-owned: the share sheet and settings are launched from it. */
-fun androidPlatformServices(activity: Activity): PlatformServices = PlatformServices(
+fun androidPlatformServices(activity: ComponentActivity): PlatformServices = PlatformServices(
     shareSheet = AndroidShareSheet(activity),
     clipboard = AndroidTextClipboard(activity),
+    fileSaver = AndroidFileSaver(activity),
     nfcSettings = AndroidNfcSettings(activity),
     dateFormatter = AndroidDateFormatter(),
     theme = AndroidThemePlatform(),

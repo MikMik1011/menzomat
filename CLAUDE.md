@@ -52,7 +52,7 @@ androidApp/                          MainActivity, MenzomatApplication (starts K
 
 Dependencies point inwards: `presentation → domain ← data`; anything may use `core` and `ui`. `domain` and `core/domain` never import `data` or `presentation`. Keep implementation classes `internal` (concrete profiles, repositories); only interfaces and screens are public.
 
-Platform differences sit behind small interfaces, provided once by each app through `PlatformServices` (`ui/platform/PlatformServices.kt`): `NfcReader`/`NfcTag` (domain/nfc), `ShareSheet`, `TextClipboard`, `NfcSettings`, `DateFormatter`, `ThemePlatform`, `AppInfo`, plus `PreferencesPath` and the `named("io")` dispatcher in the platform Koin module. To add a capability: interface in `PlatformServices.kt`, Android binding in `androidPlatformServices`, and the fake in `androidApp/src/androidTest/.../TestPlatform.kt`.
+Platform differences sit behind small interfaces, provided once by each app through `PlatformServices` (`ui/platform/PlatformServices.kt`): `NfcReader`/`NfcTag` (domain/nfc), `ShareSheet`, `TextClipboard`, `FileSaver`, `NfcSettings`, `DateFormatter`, `ThemePlatform`, `AppInfo`, plus `PreferencesPath` and the `named("io")` dispatcher in the platform Koin module. To add a capability: interface in `PlatformServices.kt`, Android binding in `androidPlatformServices`, and the fake in `androidApp/src/androidTest/.../TestPlatform.kt`.
 
 ## How a read flows
 
@@ -78,7 +78,7 @@ Rules that came from real cards and from the user:
 - **Tests first** for logic. Profiles are tested against fixtures built from made-up values (`novisad/Fixtures.kt`); never commit real card data.
 - **Test names** in `commonTest` are backticked plain-word sentences: no punctuation at all (Kotlin/Native rejects `. , : ; ( ) / \ < > [ ]` and more).
 - Compose Multiplatform resources only substitute `%1$s` and `%1$d`: pass formatted values as arguments, never `%02X` or `%%`. Accessors are imported one by one from `st.misa.menzomat.shared.resources`.
-- `Dispatchers.IO` is not common: each platform module provides `named("io")`. Copying to the clipboard goes through `TextClipboard`.
+- `Dispatchers.IO` is not common: each platform module provides `named("io")`. Copying to the clipboard goes through `TextClipboard`; saving a file goes through `FileSaver`, whose Android binding must be created in `onCreate` (it registers a result launcher) and whose result must not be awaited inside `repeatOnLifecycle`, because the save dialog stops the activity.
 - Koin: bind lists with the type spelled out (`get<List<CardProfile>>()`); `SharedModuleTest` resolves the whole graph.
 - Tests touching DataStore use real files, so wait in wall-clock time, not virtual time (see `DefaultCardRepositoryTest`).
 - Versions are pinned in `gradle/libs.versions.toml`. AGP stays at 9.3.0 (Android Studio's maximum). Material3 is an alpha because the stable release lacks the Expressive APIs.
@@ -93,4 +93,4 @@ Rules that came from real cards and from the user:
 
 ## Adding iOS later
 
-Targets `iosArm64` and `iosSimulatorArm64` are declared. Needed: an `IosNfcReader` (Core NFC `NFCTagReaderSession`; iOS scans only on request, so `NfcReader` will need a way to start a scan from a button), an `iosPlatformModule` (IO dispatcher, `PreferencesPath`, the reader), iOS versions of `ShareSheet`, `TextClipboard`, `NfcSettings`, `DateFormatter`, `ThemePlatform`, `AppInfo`, a `MainViewController()` returning `ComposeUIViewController { MenzomatApp(platform) }`, and an `iosApp/` Xcode project with `NFCReaderUsageDescription` and the NFC tag-reading entitlement. First check on a real iPhone that Core NFC can send the DESFire commands used here.
+Targets `iosArm64` and `iosSimulatorArm64` are declared. Needed: an `IosNfcReader` (Core NFC `NFCTagReaderSession`; iOS scans only on request, so `NfcReader` will need a way to start a scan from a button), an `iosPlatformModule` (IO dispatcher, `PreferencesPath`, the reader), iOS versions of `ShareSheet`, `TextClipboard`, `FileSaver` (a document picker), `NfcSettings`, `DateFormatter`, `ThemePlatform`, `AppInfo`, a `MainViewController()` returning `ComposeUIViewController { MenzomatApp(platform) }`, and an `iosApp/` Xcode project with `NFCReaderUsageDescription` and the NFC tag-reading entitlement. First check on a real iPhone that Core NFC can send the DESFire commands used here.

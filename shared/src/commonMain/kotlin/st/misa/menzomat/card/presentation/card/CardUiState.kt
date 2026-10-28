@@ -42,4 +42,5 @@ sealed interface CardEffect {
     data object OpenNfcSettings : CardEffect
     data class ShareText(val text: String) : CardEffect
     data class CopyText(val text: String) : CardEffect
+    data class SaveText(val fileName: String, val text: String) : CardEffect
 }

@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
@@ -34,6 +35,7 @@ import st.misa.menzomat.shared.resources.meals_lunch
 import st.misa.menzomat.shared.resources.nfc_disabled_action
 import st.misa.menzomat.shared.resources.profile_auto
 import st.misa.menzomat.shared.resources.profile_low_confidence
+import st.misa.menzomat.shared.resources.raw_save
 import st.misa.menzomat.shared.resources.prompt_title
 import st.misa.menzomat.shared.resources.reading_title
 import st.misa.menzomat.shared.resources.unrecognized_pick
@@ -78,10 +80,12 @@ class CardScreenTest {
         val selections = mutableListOf<ProfileSelection>()
         var dismissed = 0
         var openedNfcSettings = 0
+        var saved = 0
         override fun onSelectProfile(selection: ProfileSelection) { selections += selection }
         override fun onOpenNfcSettings() { openedNfcSettings++ }
         override fun onShareDump() = Unit
         override fun onCopyDump() = Unit
+        override fun onSaveDump() { saved++ }
         override fun onDismissError() { dismissed++ }
     }
 
@@ -160,6 +164,15 @@ class CardScreenTest {
         show(CardUiState(isLoaded = true, content = CardContent.Unrecognized(dump, candidates)))
         rule.onNodeWithText(string(Res.string.unrecognized_title)).assertIsDisplayed()
         rule.onNodeWithText(string(Res.string.unrecognized_pick)).assertIsDisplayed()
+    }
+
+    @Test
+    fun rawDataCanBeSavedToAFile() {
+        val actions = RecordingActions()
+        show(CardUiState(isLoaded = true, content = CardContent.Unrecognized(dump, candidates)), actions)
+
+        rule.onNodeWithText(string(Res.string.raw_save)).performScrollTo().performClick()
+        assertEquals(1, actions.saved)
     }
 
     @Test

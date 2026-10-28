@@ -82,25 +82,28 @@ class CardViewModel(
     }
 
     override fun onShareDump() {
-        currentDumpJson()?.let { _effects.trySend(CardEffect.ShareText(it)) }
+        currentDump()?.let { _effects.trySend(CardEffect.ShareText(it.toJson())) }
     }
 
     override fun onCopyDump() {
-        currentDumpJson()?.let { _effects.trySend(CardEffect.CopyText(it)) }
+        currentDump()?.let { _effects.trySend(CardEffect.CopyText(it.toJson())) }
+    }
+
+    override fun onSaveDump() {
+        currentDump()?.let { _effects.trySend(CardEffect.SaveText(dumpFileName(it), it.toJson())) }
     }
 
     override fun onDismissError() {
         error.update { null }
     }
 
-    private fun currentDumpJson(): String? {
-        val dump = when (val content = uiState.value.content) {
-            is CardContent.Decoded -> content.dump
-            is CardContent.Unrecognized -> content.dump
-            CardContent.Empty -> return null
-        }
-        return json.encodeToString(CardDump.serializer(), dump)
+    private fun currentDump(): CardDump? = when (val content = uiState.value.content) {
+        is CardContent.Decoded -> content.dump
+        is CardContent.Unrecognized -> content.dump
+        CardContent.Empty -> null
     }
+
+    private fun CardDump.toJson(): String = json.encodeToString(CardDump.serializer(), this)
 
     private fun contentFor(dump: CardDump, selection: ProfileSelection): CardContent =
         when (val resolution = resolver.resolve(dump, selection)) {

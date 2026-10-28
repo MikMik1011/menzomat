@@ -74,7 +74,10 @@
     <string name="raw_privacy">Izvezeni zapis sadrži lične podatke.</string>
     <string name="raw_share">Podeli</string>
     <string name="raw_copy">Kopiraj</string>
+    <string name="raw_save">Sačuvaj</string>
     <string name="dump_copied">Kopirano</string>
+    <string name="dump_saved">Sačuvano</string>
+    <string name="dump_save_failed">Čuvanje nije uspelo</string>
 
     <!-- Settings -->
     <string name="settings_title">Podešavanja</string>

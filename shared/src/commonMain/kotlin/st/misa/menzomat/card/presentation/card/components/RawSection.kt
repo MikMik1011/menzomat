@@ -4,15 +4,21 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
+import androidx.compose.material.icons.rounded.Save
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Card
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import org.jetbrains.compose.resources.stringResource
@@ -42,12 +49,14 @@ import st.misa.menzomat.shared.resources.raw_file
 import st.misa.menzomat.shared.resources.raw_file_error
 import st.misa.menzomat.shared.resources.raw_file_unknown_size
 import st.misa.menzomat.shared.resources.raw_privacy
+import st.misa.menzomat.shared.resources.raw_save
 import st.misa.menzomat.shared.resources.raw_share
 import st.misa.menzomat.shared.resources.raw_title
 import st.misa.menzomat.ui.components.HexDump
 import st.misa.menzomat.ui.theme.spacing
 
 /** Every file as read from the card, for checking decoded values and for supporting new universities. */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun RawSection(dump: CardDump, actions: CardActions, initiallyExpanded: Boolean) {
     var expanded by rememberSaveable { mutableStateOf(initiallyExpanded) }
@@ -108,18 +117,25 @@ internal fun RawSection(dump: CardDump, actions: CardActions, initiallyExpanded:
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Row(horizontalArrangement = Arrangement.spacedBy(spacing.small)) {
-                        OutlinedButton(onClick = actions::onShareDump) {
-                            Icon(Icons.Rounded.Share, contentDescription = null)
-                            Text(stringResource(Res.string.raw_share), Modifier.padding(start = spacing.small))
-                        }
-                        OutlinedButton(onClick = actions::onCopyDump) {
-                            Icon(Icons.Rounded.ContentCopy, contentDescription = null)
-                            Text(stringResource(Res.string.raw_copy), Modifier.padding(start = spacing.small))
-                        }
+                    FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.small),
+                        verticalArrangement = Arrangement.spacedBy(spacing.small),
+                    ) {
+                        RawAction(Icons.Rounded.Share, stringResource(Res.string.raw_share), actions::onShareDump)
+                        RawAction(Icons.Rounded.ContentCopy, stringResource(Res.string.raw_copy), actions::onCopyDump)
+                        RawAction(Icons.Rounded.Save, stringResource(Res.string.raw_save), actions::onSaveDump)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun RawAction(icon: ImageVector, label: String, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+        Icon(icon, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+        Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        Text(label)
     }
 }

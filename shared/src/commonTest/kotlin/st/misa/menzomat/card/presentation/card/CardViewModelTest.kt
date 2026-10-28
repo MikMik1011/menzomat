@@ -173,10 +173,24 @@ class CardViewModelTest {
     }
 
     @Test
+    fun `saving offers the raw dump as a named json file`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100))
+        states(vm)
+
+        vm.onSaveDump()
+        val effect = assertIs<CardEffect.SaveText>(vm.effects.first())
+        assertEquals(dumpFileName(dump), effect.fileName)
+        assertTrue(effect.fileName.endsWith(".json"), effect.fileName)
+        assertTrue("04AA" in effect.text, effect.text)
+    }
+
+    @Test
     fun `there is nothing to export before a card was read`() = runTest {
         val vm = viewModel(StubProfile("uns", 100))
         states(vm)
         vm.onCopyDump()
+        vm.onSaveDump()
         vm.onOpenNfcSettings()
         assertEquals(CardEffect.OpenNfcSettings, vm.effects.first())
     }

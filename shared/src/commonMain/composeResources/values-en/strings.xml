@@ -74,7 +74,10 @@
     <string name="raw_privacy">The exported record contains personal data.</string>
     <string name="raw_share">Share</string>
     <string name="raw_copy">Copy</string>
+    <string name="raw_save">Save</string>
     <string name="dump_copied">Copied</string>
+    <string name="dump_saved">Saved</string>
+    <string name="dump_save_failed">Could not save</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>

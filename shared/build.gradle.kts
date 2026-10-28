@@ -49,6 +49,7 @@ kotlin {
             implementation(libs.okio)
         }
         androidMain.dependencies {
+            implementation(libs.androidx.activity.compose)
             implementation(libs.koin.android)
             implementation(libs.kotlinx.coroutines.android)
         }

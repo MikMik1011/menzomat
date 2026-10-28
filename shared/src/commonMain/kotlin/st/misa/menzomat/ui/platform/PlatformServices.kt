@@ -16,6 +16,17 @@ interface TextClipboard {
     suspend fun copyText(text: String)
 }
 
+/** Lets the user choose where to save a text file and what to call it. */
+interface FileSaver {
+    /**
+     * Asks the user where to save [text], offering [suggestedName]; the user may rename it.
+     * Returns true once the file is written and false when the user backs out.
+     *
+     * @throws okio.IOException if the file cannot be written.
+     */
+    suspend fun saveText(suggestedName: String, text: String): Boolean
+}
+
 /** Takes the user to wherever NFC can be switched on. Platforms without such a switch do nothing. */
 interface NfcSettings {
     fun open()
@@ -47,6 +58,7 @@ class AppInfo(val versionName: String)
 class PlatformServices(
     val shareSheet: ShareSheet,
     val clipboard: TextClipboard,
+    val fileSaver: FileSaver,
     val nfcSettings: NfcSettings,
     val dateFormatter: DateFormatter,
     val theme: ThemePlatform,

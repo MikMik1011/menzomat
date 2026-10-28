@@ -9,6 +9,7 @@ interface CardActions {
     fun onOpenNfcSettings()
     fun onShareDump()
     fun onCopyDump()
+    fun onSaveDump()
     fun onDismissError()
 }
 
@@ -18,5 +19,6 @@ object NoCardActions : CardActions {
     override fun onOpenNfcSettings() = Unit
     override fun onShareDump() = Unit
     override fun onCopyDump() = Unit
+    override fun onSaveDump() = Unit
     override fun onDismissError() = Unit
 }
