@@ -73,6 +73,7 @@ Rules that came from real cards and from the user:
 ## Conventions
 
 - **UI copy: labels only.** No taglines, helper text or secondary descriptions; fix the layout instead (alignment, icons, grouping, dimming). Icon-only or number-only elements keep a content description. Kept on purpose: the personal-data warning next to Share/Copy and the detail in "Error talking to the card".
+- **Questions use `ConfirmDialog`** (`ui/components`): an icon that says what it is about, the question centered under it, two buttons, a fixed width, and no body text. Do not build a new `AlertDialog` by hand.
 - **Text the user reads lives in the string resources**, in both languages. Models carry data and keys (`ExtraField.key`, `WarningReason`, `Faculty.id`), the UI words them. `StringResourcesParityTest` fails if the two files drift (names and placeholders).
 - **Colors only in `ui/theme/Color.kt`** (ISIC palette: Light Sea Green `#40B8B8` is the hero, brand Black `#120B29` is the text on it). No raw colors or hard-coded corner shapes in components: use `MaterialTheme` roles and shapes, and `MaterialTheme.spacing` for gaps. `ContrastTest` checks the pairs.
 - **Tests first** for logic. Profiles are tested against fixtures built from made-up values (`novisad/Fixtures.kt`); never commit real card data.
