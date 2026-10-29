@@ -17,7 +17,7 @@ Serbian and English, light and dark theme, and optionally the colors of your wal
 ## How it works
 
 1. **One tap reads everything.** The card is a MIFARE DESFire EV3, and the canteen data on it is readable without a key. The phone reads every application and file the card allows into a generic dump.
-2. **A profile decodes it.** Each university has a *profile* that knows how that university lays out its card. A profile scores a dump (does this look like my card?) and decodes it into meals, balances and dates. The app picks the best match by itself, and you can switch the profile in the app at any time. The saved dump is decoded again, so you do not have to tap the card again.
+2. **A profile decodes it.** Each university has a *profile* that knows how that university lays out its card. A profile scores a dump (does this look like my card?) and decodes it into meals, balances and dates. The app picks the best match by itself, you can force a profile in the settings at any time, and the app asks if another profile fits the card better than the one you forced. The saved dump is decoded again, so you do not have to tap the card again.
 3. **The screen shows the result.** The last card you read is kept on the phone, so you can look at it without the card.
 
 ## The card

@@ -19,9 +19,11 @@
     <string name="error_communication_unknown">Error talking to the card.</string>
     <string name="error_dismiss">Dismiss</string>
 
-    <string name="profile_chip_none">Profile</string>
     <string name="profile_picker_title">Card profile</string>
     <string name="profile_auto">Automatic</string>
+    <string name="profile_better_title">Switch to %1$s?</string>
+    <string name="profile_better_switch">Switch</string>
+    <string name="profile_better_keep">Keep</string>
     <string name="profile_low_confidence">This card doesn\'t look like the “%1$s” profile.</string>
     <string name="profile_close">Close</string>
 

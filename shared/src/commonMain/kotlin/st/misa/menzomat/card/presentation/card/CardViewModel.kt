@@ -31,6 +31,9 @@ class CardViewModel(
     private val resolver: ProfileResolver,
 ) : ViewModel(), CardActions {
 
+    /** Suggestions the user declined, as card uid to suggested profile id. Forgotten when the app restarts. */
+    private val keptProfiles = MutableStateFlow<Set<Pair<String, String>>>(emptySet())
+
     private val isReading = MutableStateFlow(false)
     private val error = MutableStateFlow<CardReadError?>(null)
 
@@ -39,21 +42,25 @@ class CardViewModel(
 
     /** The profile is resolved here so that switching it re-decodes the stored dump without another tap. */
     val uiState: StateFlow<CardUiState> = combine(
-        repository.nfcStatus,
-        repository.lastDump,
-        settings.settings.map { it.selection }.distinctUntilChanged(),
-        isReading,
-        error,
-    ) { nfc, dump, selection, reading, readError ->
-        CardUiState(
-            isLoaded = true,
-            nfcStatus = nfc,
-            isReading = reading,
-            error = readError,
-            selection = selection,
-            content = dump?.let { contentFor(it, selection) } ?: CardContent.Empty,
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), CardUiState())
+        combine(
+            repository.nfcStatus,
+            repository.lastDump,
+            settings.settings.map { it.selection }.distinctUntilChanged(),
+            isReading,
+            error,
+        ) { nfc, dump, selection, reading, readError ->
+            CardUiState(
+                isLoaded = true,
+                nfcStatus = nfc,
+                isReading = reading,
+                error = readError,
+                selection = selection,
+                content = dump?.let { contentFor(it, selection) } ?: CardContent.Empty,
+            )
+        },
+        keptProfiles,
+    ) { state, kept -> state.withoutKeptSuggestion(kept) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), CardUiState())
 
     init {
         viewModelScope.launch {
@@ -93,6 +100,12 @@ class CardViewModel(
         currentDump()?.let { _effects.trySend(CardEffect.SaveText(dumpFileName(it), it.toJson())) }
     }
 
+    override fun onKeepProfile() {
+        val decoded = uiState.value.content as? CardContent.Decoded ?: return
+        val match = decoded.betterMatch ?: return
+        keptProfiles.update { it + (decoded.dump.uid to match.profile.id) }
+    }
+
     override fun onDismissError() {
         error.update { null }
     }
@@ -114,9 +127,18 @@ class CardViewModel(
                 isAuto = resolution.isAuto,
                 isLowConfidence = resolution.isLowConfidence,
                 candidates = resolution.candidates.map { it.toCandidate() },
+                betterMatch = resolution.candidates.firstOrNull()
+                    ?.takeIf { it.profile.id != resolution.profile.id && it.score > resolution.score }
+                    ?.toCandidate(),
             )
             is Resolution.Unrecognized -> CardContent.Unrecognized(dump, resolution.candidates.map { it.toCandidate() })
         }
+
+    private fun CardUiState.withoutKeptSuggestion(kept: Set<Pair<String, String>>): CardUiState {
+        val decoded = content as? CardContent.Decoded ?: return this
+        val match = decoded.betterMatch ?: return this
+        return if (decoded.dump.uid to match.profile.id in kept) copy(content = decoded.copy(betterMatch = null)) else this
+    }
 
     private fun Scored.toCandidate() = ProfileCandidate(profile.toInfo(), score)
 

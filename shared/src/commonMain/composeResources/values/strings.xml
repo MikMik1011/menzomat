@@ -19,9 +19,11 @@
     <string name="error_communication_unknown">Greška u komunikaciji sa karticom.</string>
     <string name="error_dismiss">Zatvori</string>
 
-    <string name="profile_chip_none">Profil</string>
     <string name="profile_picker_title">Profil kartice</string>
     <string name="profile_auto">Automatski</string>
+    <string name="profile_better_title">Prebaciti na %1$s?</string>
+    <string name="profile_better_switch">Prebaci</string>
+    <string name="profile_better_keep">Zadrži</string>
     <string name="profile_low_confidence">Kartica ne liči na profil „%1$s“.</string>
     <string name="profile_close">Zatvori</string>
 

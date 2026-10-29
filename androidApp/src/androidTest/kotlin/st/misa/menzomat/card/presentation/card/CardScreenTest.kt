@@ -34,6 +34,9 @@ import st.misa.menzomat.shared.resources.meals_line
 import st.misa.menzomat.shared.resources.meals_lunch
 import st.misa.menzomat.shared.resources.nfc_disabled_action
 import st.misa.menzomat.shared.resources.profile_auto
+import st.misa.menzomat.shared.resources.profile_better_keep
+import st.misa.menzomat.shared.resources.profile_better_switch
+import st.misa.menzomat.shared.resources.profile_better_title
 import st.misa.menzomat.shared.resources.profile_low_confidence
 import st.misa.menzomat.shared.resources.raw_save
 import st.misa.menzomat.shared.resources.prompt_title
@@ -67,13 +70,14 @@ class CardScreenTest {
         cashBalanceRsd = 48,
     )
 
-    private fun decoded(isAuto: Boolean = true, isLowConfidence: Boolean = false) = CardContent.Decoded(
+    private fun decoded(isAuto: Boolean = true, isLowConfidence: Boolean = false, betterMatch: ProfileCandidate? = null) = CardContent.Decoded(
         card = card,
         dump = dump,
         profile = uns,
         isAuto = isAuto,
         isLowConfidence = isLowConfidence,
         candidates = candidates,
+        betterMatch = betterMatch,
     )
 
     private class RecordingActions : CardActions {
@@ -81,11 +85,13 @@ class CardScreenTest {
         var dismissed = 0
         var openedNfcSettings = 0
         var saved = 0
+        var kept = 0
         override fun onSelectProfile(selection: ProfileSelection) { selections += selection }
         override fun onOpenNfcSettings() { openedNfcSettings++ }
         override fun onShareDump() = Unit
         override fun onCopyDump() = Unit
         override fun onSaveDump() { saved++ }
+        override fun onKeepProfile() { kept++ }
         override fun onDismissError() { dismissed++ }
     }
 
@@ -134,9 +140,9 @@ class CardScreenTest {
     @Test
     fun choosingAProfileInThePickerIsReported() {
         val actions = RecordingActions()
-        show(CardUiState(isLoaded = true, content = decoded()), actions)
+        show(CardUiState(isLoaded = true, content = CardContent.Unrecognized(dump, candidates)), actions)
 
-        rule.onNodeWithText("UNS").performClick()
+        rule.onNodeWithText(string(Res.string.unrecognized_pick)).performScrollTo().performClick()
         rule.onNodeWithText(other.name).performClick()
 
         assertEquals(listOf<ProfileSelection>(ProfileSelection.Manual("bg")), actions.selections)
@@ -145,12 +151,40 @@ class CardScreenTest {
     @Test
     fun pickerOffersAutomaticDetection() {
         val actions = RecordingActions()
-        show(CardUiState(isLoaded = true, selection = ProfileSelection.Manual("bg"), content = decoded(isAuto = false)), actions)
+        show(CardUiState(isLoaded = true, selection = ProfileSelection.Manual("bg"), content = CardContent.Unrecognized(dump, candidates)), actions)
 
-        rule.onNodeWithText("UNS").performClick()
+        rule.onNodeWithText(string(Res.string.unrecognized_pick)).performScrollTo().performClick()
         rule.onNodeWithText(string(Res.string.profile_auto)).performClick()
 
         assertEquals(listOf<ProfileSelection>(ProfileSelection.Auto), actions.selections)
+    }
+
+    @Test
+    fun aBetterMatchAsksBeforeSwitching() {
+        val actions = RecordingActions()
+        show(CardUiState(isLoaded = true, content = decoded(isAuto = false, betterMatch = ProfileCandidate(uns, 100))), actions)
+
+        rule.onNodeWithText(string(Res.string.profile_better_title, uns.name)).assertIsDisplayed()
+        rule.onNodeWithText(string(Res.string.profile_better_switch)).performClick()
+
+        assertEquals(listOf<ProfileSelection>(ProfileSelection.Auto), actions.selections)
+    }
+
+    @Test
+    fun aBetterMatchCanBeDeclined() {
+        val actions = RecordingActions()
+        show(CardUiState(isLoaded = true, content = decoded(isAuto = false, betterMatch = ProfileCandidate(uns, 100))), actions)
+
+        rule.onNodeWithText(string(Res.string.profile_better_keep)).performClick()
+
+        assertEquals(1, actions.kept)
+        assertEquals(emptyList<ProfileSelection>(), actions.selections)
+    }
+
+    @Test
+    fun withoutABetterMatchNothingIsAsked() {
+        show(CardUiState(isLoaded = true, content = decoded()))
+        rule.onNodeWithText(string(Res.string.profile_better_switch)).assertDoesNotExist()
     }
 
     @Test

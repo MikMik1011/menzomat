@@ -10,6 +10,7 @@ interface CardActions {
     fun onShareDump()
     fun onCopyDump()
     fun onSaveDump()
+    fun onKeepProfile()
     fun onDismissError()
 }
 
@@ -20,5 +21,6 @@ object NoCardActions : CardActions {
     override fun onShareDump() = Unit
     override fun onCopyDump() = Unit
     override fun onSaveDump() = Unit
+    override fun onKeepProfile() = Unit
     override fun onDismissError() = Unit
 }

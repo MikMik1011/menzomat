@@ -119,6 +119,59 @@ class CardViewModelTest {
     }
 
     @Test
+    fun `a forced profile that another profile beats names the better match`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100), StubProfile("bg", 40))
+        val seen = states(vm)
+
+        vm.onSelectProfile(ProfileSelection.Manual("bg"))
+
+        val match = assertIs<CardContent.Decoded>(seen.last().content).betterMatch
+        assertEquals("uns", match?.profile?.id)
+        assertEquals(100, match?.score)
+    }
+
+    @Test
+    fun `automatic detection never suggests another profile`() = runTest {
+        repository.dump.value = dump
+        val seen = states(viewModel(StubProfile("uns", 100), StubProfile("bg", 40)))
+        assertNull(assertIs<CardContent.Decoded>(seen.last().content).betterMatch)
+    }
+
+    @Test
+    fun `a forced profile that is already the best match suggests nothing`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100), StubProfile("bg", 40))
+        val seen = states(vm)
+        vm.onSelectProfile(ProfileSelection.Manual("uns"))
+        assertNull(assertIs<CardContent.Decoded>(seen.last().content).betterMatch)
+    }
+
+    @Test
+    fun `a tie is not a better match`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100), StubProfile("bg", 100))
+        val seen = states(vm)
+        vm.onSelectProfile(ProfileSelection.Manual("bg"))
+        assertNull(assertIs<CardContent.Decoded>(seen.last().content).betterMatch)
+    }
+
+    @Test
+    fun `keeping the forced profile silences the suggestion for that card only`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100), StubProfile("bg", 40))
+        val seen = states(vm)
+        vm.onSelectProfile(ProfileSelection.Manual("bg"))
+        assertIs<CardContent.Decoded>(seen.last().content).betterMatch ?: error("expected a suggestion")
+
+        vm.onKeepProfile()
+        assertNull(assertIs<CardContent.Decoded>(seen.last().content).betterMatch)
+
+        repository.dump.value = CardDump("04BB", 0, listOf(AppDump(Aid(13))))
+        assertEquals("uns", assertIs<CardContent.Decoded>(seen.last().content).betterMatch?.profile?.id)
+    }
+
+    @Test
     fun `a card no profile recognizes keeps its raw dump`() = runTest {
         repository.dump.value = dump
         val seen = states(viewModel(StubProfile("uns", 0)))

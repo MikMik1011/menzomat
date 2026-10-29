@@ -21,6 +21,8 @@ sealed interface CardContent {
         /** The user forced a profile this card does not look like. */
         val isLowConfidence: Boolean,
         val candidates: List<ProfileCandidate>,
+        /** A profile that fits this card better than the one in use; null when the best one is in use or the user declined. */
+        val betterMatch: ProfileCandidate? = null,
     ) : CardContent
 
     data class Unrecognized(

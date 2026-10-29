@@ -10,9 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material.icons.rounded.SwapHoriz
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowSizeClass
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.NfcStatus
+import st.misa.menzomat.card.domain.model.ProfileSelection
+import st.misa.menzomat.card.presentation.card.components.BetterMatchDialog
 import st.misa.menzomat.card.presentation.card.components.DecodedCard
 import st.misa.menzomat.card.presentation.card.components.ErrorCard
 import st.misa.menzomat.card.presentation.card.components.IdlePrompt
@@ -45,7 +44,6 @@ import st.misa.menzomat.card.presentation.card.components.UnrecognizedCard
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.action_settings
 import st.misa.menzomat.shared.resources.card_title
-import st.misa.menzomat.shared.resources.profile_chip_none
 import st.misa.menzomat.ui.theme.contentMaxWidth
 import st.misa.menzomat.ui.theme.spacing
 
@@ -69,7 +67,6 @@ fun CardScreen(
             TopAppBar(
                 title = { Text(stringResource(Res.string.card_title)) },
                 actions = {
-                    ProfileChip(state.content, onClick = { pickerOpen = true })
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Rounded.Settings, contentDescription = stringResource(Res.string.action_settings))
                     }
@@ -93,6 +90,14 @@ fun CardScreen(
         }
     }
 
+    (state.content as? CardContent.Decoded)?.betterMatch?.let { match ->
+        BetterMatchDialog(
+            profileName = match.profile.name,
+            onSwitch = { actions.onSelectProfile(ProfileSelection.Auto) },
+            onKeep = actions::onKeepProfile,
+        )
+    }
+
     if (pickerOpen) {
         val candidates = when (val content = state.content) {
             is CardContent.Decoded -> content.candidates
@@ -107,28 +112,6 @@ fun CardScreen(
             useDialog = isWide,
         )
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ProfileChip(content: CardContent, onClick: () -> Unit) {
-    val label = when (content) {
-        is CardContent.Decoded -> content.profile.shortName
-        is CardContent.Unrecognized -> stringResource(Res.string.profile_chip_none)
-        CardContent.Empty -> return
-    }
-    val colors = MaterialTheme.colorScheme
-    AssistChip(
-        onClick = onClick,
-        label = { Text(label) },
-        leadingIcon = { Icon(Icons.Rounded.SwapHoriz, contentDescription = null) },
-        colors = AssistChipDefaults.assistChipColors(
-            containerColor = colors.surface,
-            labelColor = colors.onSurface,
-            leadingIconContentColor = colors.primary,
-        ),
-        border = null,
-    )
 }
 
 @Composable
