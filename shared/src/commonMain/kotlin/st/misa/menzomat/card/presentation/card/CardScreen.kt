@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,6 +36,7 @@ import st.misa.menzomat.card.domain.model.NfcStatus
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.presentation.card.components.BetterMatchDialog
 import st.misa.menzomat.card.presentation.card.components.DecodedCard
+import st.misa.menzomat.card.presentation.card.components.DeleteDataDialog
 import st.misa.menzomat.card.presentation.card.components.ErrorCard
 import st.misa.menzomat.card.presentation.card.components.IdlePrompt
 import st.misa.menzomat.card.presentation.card.components.NfcDisabledCard
@@ -42,6 +44,7 @@ import st.misa.menzomat.card.presentation.card.components.NfcUnavailableCard
 import st.misa.menzomat.card.presentation.card.components.ProfilePicker
 import st.misa.menzomat.card.presentation.card.components.UnrecognizedCard
 import st.misa.menzomat.shared.resources.Res
+import st.misa.menzomat.shared.resources.action_delete_data
 import st.misa.menzomat.shared.resources.action_settings
 import st.misa.menzomat.shared.resources.card_title
 import st.misa.menzomat.ui.theme.contentMaxWidth
@@ -57,6 +60,7 @@ fun CardScreen(
     modifier: Modifier = Modifier,
 ) {
     var pickerOpen by rememberSaveable { mutableStateOf(false) }
+    var confirmDelete by rememberSaveable { mutableStateOf(false) }
     val isWide = currentWindowAdaptiveInfo().windowSizeClass
         .isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val colors = MaterialTheme.colorScheme
@@ -67,6 +71,11 @@ fun CardScreen(
             TopAppBar(
                 title = { Text(stringResource(Res.string.card_title)) },
                 actions = {
+                    if (state.content != CardContent.Empty) {
+                        IconButton(onClick = { confirmDelete = true }) {
+                            Icon(Icons.Rounded.Delete, contentDescription = stringResource(Res.string.action_delete_data))
+                        }
+                    }
                     IconButton(onClick = onOpenSettings) {
                         Icon(Icons.Rounded.Settings, contentDescription = stringResource(Res.string.action_settings))
                     }
@@ -88,6 +97,16 @@ fun CardScreen(
                 Body(state, actions, isWide, onPickProfile = { pickerOpen = true })
             }
         }
+    }
+
+    if (confirmDelete) {
+        DeleteDataDialog(
+            onConfirm = {
+                confirmDelete = false
+                actions.onDeleteData()
+            },
+            onDismiss = { confirmDelete = false },
+        )
     }
 
     (state.content as? CardContent.Decoded)?.betterMatch?.let { match ->

@@ -22,6 +22,10 @@ internal class LastDumpStore(private val store: DataStore<Preferences>) {
         store.edit { it[KEY] = json.encodeToString(CardDump.serializer(), dump) }
     }
 
+    suspend fun clear() {
+        store.edit { it.remove(KEY) }
+    }
+
     // A value written by an older version, or damaged, is treated as "no card yet" rather than an error.
     private fun decode(text: String): CardDump? = try {
         json.decodeFromString(CardDump.serializer(), text)

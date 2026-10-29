@@ -39,6 +39,8 @@ internal class DefaultCardRepository(
         emit(read(tag))
     }
 
+    override suspend fun clearLastDump() = lastDumpStore.clear()
+
     private suspend fun read(tag: NfcTag): ScanEvent = try {
         val dump = withContext(io) { tag.useTransceiver { CardDumper(IsoDesfireClient(it)).dump(tag.uid) } }
         if (dump.apps.isEmpty()) {

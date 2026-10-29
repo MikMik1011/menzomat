@@ -4,6 +4,10 @@
     <!-- Card -->
     <string name="card_title">Menzomat</string>
     <string name="action_settings">Podešavanja</string>
+    <string name="action_delete_data">Obriši sačuvanu karticu</string>
+    <string name="delete_data_title">Obrisati sačuvanu karticu?</string>
+    <string name="delete_data_confirm">Obriši</string>
+    <string name="delete_data_cancel">Otkaži</string>
 
     <string name="prompt_title">Prisloni karticu</string>
     <string name="reading_title">Čitanje kartice…</string>

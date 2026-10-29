@@ -57,6 +57,27 @@ class StoresTest {
     }
 
     @Test
+    fun `clearing removes the stored dump and leaves the settings alone`() = runTest {
+        val prefs = preferences()
+        val store = LastDumpStore(prefs)
+        val settings = DataStoreSettingsRepository(prefs)
+        store.save(dump)
+        settings.setThemeMode(ThemeMode.Dark)
+
+        store.clear()
+
+        assertNull(store.dump.first())
+        assertEquals(ThemeMode.Dark, settings.settings.first().themeMode)
+    }
+
+    @Test
+    fun `clearing with nothing stored is harmless`() = runTest {
+        val store = LastDumpStore(preferences())
+        store.clear()
+        assertNull(store.dump.first())
+    }
+
+    @Test
     fun `a damaged dump value is treated as no card and can be replaced`() = runTest {
         val prefs = preferences()
         prefs.edit { it[stringPreferencesKey("last_dump")] = "{ this is not json" }

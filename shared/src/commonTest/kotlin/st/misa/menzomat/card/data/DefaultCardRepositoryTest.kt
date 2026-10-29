@@ -80,6 +80,17 @@ class DefaultCardRepositoryTest {
     }
 
     @Test
+    fun `clearing the last dump leaves no card to show`() = runTest {
+        val h = Harness(this)
+        h.tap(FakeTag.withCard(canteenCard()))
+        assertNotNull(h.repository.lastDump.first())
+
+        h.repository.clearLastDump()
+
+        assertNull(h.repository.lastDump.first())
+    }
+
+    @Test
     fun `a tag that is not iso dep is reported as not desfire`() = runTest {
         val h = Harness(this)
         h.tap(FakeTag.failing(UnsupportedTagException()))

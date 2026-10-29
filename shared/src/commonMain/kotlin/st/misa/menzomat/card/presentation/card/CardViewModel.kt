@@ -26,7 +26,7 @@ import st.misa.menzomat.card.domain.repository.SettingsRepository
 import st.misa.menzomat.core.domain.desfire.CardDump
 
 class CardViewModel(
-    repository: CardRepository,
+    private val repository: CardRepository,
     private val settings: SettingsRepository,
     private val resolver: ProfileResolver,
 ) : ViewModel(), CardActions {
@@ -104,6 +104,12 @@ class CardViewModel(
         val decoded = uiState.value.content as? CardContent.Decoded ?: return
         val match = decoded.betterMatch ?: return
         keptProfiles.update { it + (decoded.dump.uid to match.profile.id) }
+    }
+
+    override fun onDeleteData() {
+        viewModelScope.launch { repository.clearLastDump() }
+        keptProfiles.value = emptySet()
+        error.value = null
     }
 
     override fun onDismissError() {

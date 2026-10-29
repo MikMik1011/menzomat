@@ -25,6 +25,10 @@ import st.misa.menzomat.core.domain.desfire.Aid
 import st.misa.menzomat.core.domain.desfire.AppDump
 import st.misa.menzomat.core.domain.desfire.CardDump
 import st.misa.menzomat.shared.resources.Res
+import st.misa.menzomat.shared.resources.action_delete_data
+import st.misa.menzomat.shared.resources.delete_data_cancel
+import st.misa.menzomat.shared.resources.delete_data_confirm
+import st.misa.menzomat.shared.resources.delete_data_title
 import st.misa.menzomat.shared.resources.error_dismiss
 import st.misa.menzomat.shared.resources.error_tag_lost
 import st.misa.menzomat.shared.resources.meals_breakfast
@@ -86,12 +90,14 @@ class CardScreenTest {
         var openedNfcSettings = 0
         var saved = 0
         var kept = 0
+        var deleted = 0
         override fun onSelectProfile(selection: ProfileSelection) { selections += selection }
         override fun onOpenNfcSettings() { openedNfcSettings++ }
         override fun onShareDump() = Unit
         override fun onCopyDump() = Unit
         override fun onSaveDump() { saved++ }
         override fun onKeepProfile() { kept++ }
+        override fun onDeleteData() { deleted++ }
         override fun onDismissError() { dismissed++ }
     }
 
@@ -207,6 +213,37 @@ class CardScreenTest {
 
         rule.onNodeWithText(string(Res.string.raw_save)).performScrollTo().performClick()
         assertEquals(1, actions.saved)
+    }
+
+    @Test
+    fun deletingTheSavedCardAsksFirst() {
+        val actions = RecordingActions()
+        show(CardUiState(isLoaded = true, content = decoded()), actions)
+
+        rule.onNodeWithContentDescription(string(Res.string.action_delete_data)).performClick()
+        rule.onNodeWithText(string(Res.string.delete_data_title)).assertIsDisplayed()
+        assertEquals(0, actions.deleted)
+
+        rule.onNodeWithText(string(Res.string.delete_data_confirm)).performClick()
+        assertEquals(1, actions.deleted)
+    }
+
+    @Test
+    fun decliningKeepsTheSavedCard() {
+        val actions = RecordingActions()
+        show(CardUiState(isLoaded = true, content = decoded()), actions)
+
+        rule.onNodeWithContentDescription(string(Res.string.action_delete_data)).performClick()
+        rule.onNodeWithText(string(Res.string.delete_data_cancel)).performClick()
+
+        assertEquals(0, actions.deleted)
+        rule.onNodeWithText(string(Res.string.delete_data_title)).assertDoesNotExist()
+    }
+
+    @Test
+    fun withoutASavedCardThereIsNothingToDelete() {
+        show(CardUiState(isLoaded = true))
+        rule.onNodeWithContentDescription(string(Res.string.action_delete_data)).assertDoesNotExist()
     }
 
     @Test

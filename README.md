@@ -30,7 +30,7 @@ File `0x00` also holds the holder's national id (JMBG). The app deliberately lea
 
 ## Privacy
 
-Nothing leaves your phone. The app asks for the NFC permission and nothing else, so it cannot reach the internet. The last card read is stored on the phone only and is left out of backups. Sharing, copying or saving the raw data is something you do yourself; saving uses the system "save as" dialog, so the app needs no storage permission.
+Nothing leaves your phone. The app asks for the NFC permission and nothing else, so it cannot reach the internet. The last card read is stored on the phone only and is left out of backups. The trash icon in the top bar deletes it (the settings stay). Sharing, copying or saving the raw data is something you do yourself; saving uses the system "save as" dialog, so the app needs no storage permission.
 
 ## Build and run
 

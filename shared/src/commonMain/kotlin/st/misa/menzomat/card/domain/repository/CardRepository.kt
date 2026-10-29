@@ -18,4 +18,7 @@ interface CardRepository {
 
     /** The last successfully read card, kept for the offline view. Null if none yet. */
     val lastDump: Flow<CardDump?>
+
+    /** Forgets the stored card; the settings stay. */
+    suspend fun clearLastDump()
 }

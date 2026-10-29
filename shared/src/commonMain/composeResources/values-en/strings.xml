@@ -4,6 +4,10 @@
     <!-- Card -->
     <string name="card_title">Menzomat</string>
     <string name="action_settings">Settings</string>
+    <string name="action_delete_data">Delete saved card</string>
+    <string name="delete_data_title">Delete the saved card?</string>
+    <string name="delete_data_confirm">Delete</string>
+    <string name="delete_data_cancel">Cancel</string>
 
     <string name="prompt_title">Tap your card</string>
     <string name="reading_title">Reading card…</string>

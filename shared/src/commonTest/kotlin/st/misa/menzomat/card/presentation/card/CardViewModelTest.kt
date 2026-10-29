@@ -45,6 +45,7 @@ class CardViewModelTest {
         override val scans: Flow<ScanEvent> = scanEvents
         val dump = MutableStateFlow<CardDump?>(null)
         override val lastDump: Flow<CardDump?> = dump
+        override suspend fun clearLastDump() { dump.value = null }
     }
 
     private class FakeSettings : SettingsRepository {
@@ -169,6 +170,31 @@ class CardViewModelTest {
 
         repository.dump.value = CardDump("04BB", 0, listOf(AppDump(Aid(13))))
         assertEquals("uns", assertIs<CardContent.Decoded>(seen.last().content).betterMatch?.profile?.id)
+    }
+
+    @Test
+    fun `deleting the data empties the screen`() = runTest {
+        repository.dump.value = dump
+        val vm = viewModel(StubProfile("uns", 100))
+        val seen = states(vm)
+        assertIs<CardContent.Decoded>(seen.last().content)
+
+        vm.onDeleteData()
+
+        assertEquals(CardContent.Empty, seen.last().content)
+    }
+
+    @Test
+    fun `deleting the data also clears an old error`() = runTest {
+        val vm = viewModel(StubProfile("uns", 100))
+        val seen = states(vm)
+        repository.scanEvents.subscriptionCount.first { it > 0 }
+        repository.scanEvents.emit(ScanEvent.Failed(CardReadError.TagLost))
+        assertEquals(CardReadError.TagLost, seen.last().error)
+
+        vm.onDeleteData()
+
+        assertNull(seen.last().error)
     }
 
     @Test
