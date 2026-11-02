@@ -34,5 +34,6 @@ internal object NoviSadLayout {
         1 to "uns-ftn", // Faculty of Technical Sciences
         2 to "uns-ff", // Faculty of Philosophy
         4 to "uns-pmf", // Faculty of Sciences
+        6 to "uns-polj", // Faculty of Agriculture
     )
 }

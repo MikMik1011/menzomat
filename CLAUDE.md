@@ -69,7 +69,7 @@ Rules that came from real cards and from the user:
 - The validated-until date (0x06) exists only once the card is renewed. The app does not show it; its presence adds 1 to the study year stored in 0x07.
 - The holder's national id (JMBG) is deliberately never decoded, shown or masked. Do not add it back. It stays in the raw data, which is the card as read.
 - A card expires on the later of its two dates (`Validity.expiresOn`), so a renewed card is never flagged. `expiryWarning(validity, today)` returns `Expired` once that day has passed and `ExpiresSoon` from `EXPIRES_SOON_DAYS` (30) before it; `ExpiryBanner` shows it above the meals. Pass `today` in tests, never read the clock inside the logic.
-- Faculty ids 1, 2 and 4 are known (Technical Sciences, Philosophy, Sciences) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
+- Faculty ids 1, 2, 4 and 6 are known (Technical Sciences, Philosophy, Sciences, Agriculture) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
 
 ## Conventions
 

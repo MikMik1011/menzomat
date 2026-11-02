@@ -139,6 +139,7 @@ class NoviSadProfileTest {
         assertEquals(Faculty(1, "uns-ftn"), facultyOf("01"))
         assertEquals(Faculty(2, "uns-ff"), facultyOf("02"))
         assertEquals(Faculty(4, "uns-pmf"), facultyOf("04"))
+        assertEquals(Faculty(6, "uns-polj"), facultyOf("06"))
     }
 
     @Test

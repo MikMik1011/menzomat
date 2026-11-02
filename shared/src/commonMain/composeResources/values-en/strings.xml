@@ -74,6 +74,7 @@
     <string name="faculty_uns_ftn">Faculty of Technical Sciences</string>
     <string name="faculty_uns_ff">Faculty of Philosophy</string>
     <string name="faculty_uns_pmf">Faculty of Sciences</string>
+    <string name="faculty_uns_polj">Faculty of Agriculture</string>
     <string name="warning_truncated">data too short</string>
     <string name="warning_missing">file not found</string>
     <string name="warning_invalid">invalid value: %1$s</string>

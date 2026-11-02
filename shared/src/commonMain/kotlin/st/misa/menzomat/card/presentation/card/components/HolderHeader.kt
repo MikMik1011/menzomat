@@ -17,6 +17,7 @@ import st.misa.menzomat.shared.resources.faculty_number
 import st.misa.menzomat.shared.resources.faculty_uns_ff
 import st.misa.menzomat.shared.resources.faculty_uns_ftn
 import st.misa.menzomat.shared.resources.faculty_uns_pmf
+import st.misa.menzomat.shared.resources.faculty_uns_polj
 import st.misa.menzomat.shared.resources.holder_unknown
 import st.misa.menzomat.shared.resources.study_year
 import st.misa.menzomat.ui.theme.spacing
@@ -26,6 +27,7 @@ internal fun knownFacultyName(key: String): StringResource? = when (key) {
     "uns-ftn" -> Res.string.faculty_uns_ftn
     "uns-ff" -> Res.string.faculty_uns_ff
     "uns-pmf" -> Res.string.faculty_uns_pmf
+    "uns-polj" -> Res.string.faculty_uns_polj
     else -> null
 }
 
