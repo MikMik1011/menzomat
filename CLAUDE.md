@@ -68,6 +68,7 @@ Rules that came from real cards and from the user:
 - Months in files 0x01 and 0x04 are 0-based on old terminal software and 1-based on newer; 0x02, 0x06, 0x09 are always 1-based. `resolveTransactionDate` and `resolveCardDate` decide per card.
 - The validated-until date (0x06) exists only once the card is renewed. The app does not show it; its presence adds 1 to the study year stored in 0x07.
 - The holder's national id (JMBG) is deliberately never decoded, shown or masked. Do not add it back. It stays in the raw data, which is the card as read.
+- A card expires on the later of its two dates (`Validity.expiresOn`), so a renewed card is never flagged. `expiryWarning(validity, today)` returns `Expired` once that day has passed and `ExpiresSoon` from `EXPIRES_SOON_DAYS` (30) before it; `ExpiryBanner` shows it above the meals. Pass `today` in tests, never read the clock inside the logic.
 - Faculty ids 1, 2 and 4 are known (Technical Sciences, Philosophy, Sciences) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
 
 ## Conventions
@@ -75,7 +76,7 @@ Rules that came from real cards and from the user:
 - **UI copy: labels only.** No taglines, helper text or secondary descriptions; fix the layout instead (alignment, icons, grouping, dimming). Icon-only or number-only elements keep a content description. Kept on purpose: the personal-data warning next to Share/Copy and the detail in "Error talking to the card".
 - **Questions use `ConfirmDialog`** (`ui/components`): an icon that says what it is about, the question centered under it, two buttons, a fixed width, and no body text. Do not build a new `AlertDialog` by hand.
 - **Text the user reads lives in the string resources**, in both languages. Models carry data and keys (`ExtraField.key`, `WarningReason`, `Faculty.id`), the UI words them. `StringResourcesParityTest` fails if the two files drift (names and placeholders).
-- **Colors only in `ui/theme/Color.kt`** (ISIC palette: Light Sea Green `#40B8B8` is the hero, brand Black `#120B29` is the text on it). No raw colors or hard-coded corner shapes in components: use `MaterialTheme` roles and shapes, and `MaterialTheme.spacing` for gaps. `ContrastTest` checks the pairs.
+- **Colors only in `ui/theme/Color.kt`** (ISIC palette: Light Sea Green `#40B8B8` is the hero, brand Black `#120B29` is the text on it). No raw colors or hard-coded corner shapes in components: use `MaterialTheme` roles and shapes, and `MaterialTheme.spacing` for gaps. `ContrastTest` checks the pairs. Warnings use `MaterialTheme.warning` (the brand Khaki mixed into the surface, Khaki itself only on the icon); a solid Khaki fill is for small accents such as the cash badge.
 - **Tests first** for logic. Profiles are tested against fixtures built from made-up values (`novisad/Fixtures.kt`); never commit real card data.
 - **Test names** in `commonTest` are backticked plain-word sentences: no punctuation at all (Kotlin/Native rejects `. , : ; ( ) / \ < > [ ]` and more).
 - Compose Multiplatform resources only substitute `%1$s` and `%1$d`: pass formatted values as arguments, never `%02X` or `%%`. Accessors are imported one by one from `st.misa.menzomat.shared.resources`.

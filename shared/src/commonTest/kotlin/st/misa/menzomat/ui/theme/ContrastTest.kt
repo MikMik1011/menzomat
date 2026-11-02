@@ -47,6 +47,24 @@ class ContrastTest {
         assertTrue(ratio >= TEXT, "highlight contrast $ratio")
     }
 
+    @Test
+    fun `warning banner text is readable in both schemes`() {
+        listOf("light" to MenzomatLightColors, "dark" to MenzomatDarkColors).forEach { (name, scheme) ->
+            val warning = warningColors(scheme)
+            val ratio = contrast(warning.container, warning.content)
+            assertTrue(ratio >= TEXT, "$name warning text contrast $ratio")
+        }
+    }
+
+    @Test
+    fun `warning banner icon stands out from its container in both schemes`() {
+        listOf("light" to MenzomatLightColors, "dark" to MenzomatDarkColors).forEach { (name, scheme) ->
+            val warning = warningColors(scheme)
+            val ratio = contrast(warning.container, warning.icon)
+            assertTrue(ratio >= COMPONENT, "$name warning icon contrast $ratio")
+        }
+    }
+
     private fun check(scheme: String, colors: ColorScheme) {
         val failures = colors.pairs().mapNotNull { pair ->
             val ratio = contrast(pair.background, pair.foreground)

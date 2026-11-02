@@ -40,7 +40,13 @@ data class Validity(
     val cardValidUntil: LocalDate?,
     /** Null until the card is validated for the current academic year. */
     val validatedUntil: LocalDate?,
-)
+) {
+    /**
+     * When the card stops being valid: the later of its two dates, so a card that was renewed is never
+     * taken for an old one. Null when the card carries neither date.
+     */
+    val expiresOn: LocalDate? get() = listOfNotNull(cardValidUntil, validatedUntil).maxOrNull()
+}
 
 data class MealBalance(
     val breakfast: Int,

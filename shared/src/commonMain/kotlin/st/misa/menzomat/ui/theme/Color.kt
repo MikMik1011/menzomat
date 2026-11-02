@@ -1,11 +1,15 @@
 package st.misa.menzomat.ui.theme
 
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 
 /**
  * ISIC brand palette (brandguide.isic.cz/color). This is the only file that contains color literals.
@@ -32,6 +36,8 @@ private object Isic {
     val Tomato900 = Color(0xFF622925)
 
     val Khaki = Color(0xFFFFE66D)
+    val KhakiTint = Color(0xFFFFF6C8)
+    val KhakiDeep = Color(0xFF92864E)
 
     val Ink = Color(0xFF120B29)
     val Ink50 = Color(0xFFDCDAE3)
@@ -137,3 +143,24 @@ class BrandColors(
 )
 
 internal val MenzomatBrandColors = BrandColors(highlight = Isic.Khaki, onHighlight = Isic.Ink)
+
+/**
+ * A warning in a calm tint, with the text in the normal text color. Dark: the brand Khaki mixed into the surface,
+ * and Khaki itself for the icon. Light: the brand's pale Khaki tint (mixing yellow into a teal-gray surface turns
+ * it green) and its deep shade for the icon. A full Khaki banner is too loud for something shown on every visit.
+ */
+@Immutable
+class WarningColors(val container: Color, val content: Color, val icon: Color)
+
+internal fun warningColors(scheme: ColorScheme): WarningColors {
+    val dark = scheme.surface.luminance() < 0.5f
+    return WarningColors(
+        container = if (dark) lerp(scheme.surfaceContainerHigh, Isic.Khaki, 0.16f) else Isic.KhakiTint,
+        content = scheme.onSurface,
+        icon = if (dark) Isic.Khaki else Isic.KhakiDeep,
+    )
+}
+
+/** The warning colors of the current theme, so they follow wallpaper colors too. */
+val MaterialTheme.warning: WarningColors
+    @Composable @ReadOnlyComposable get() = warningColors(colorScheme)

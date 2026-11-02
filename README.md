@@ -9,6 +9,7 @@ It runs on Android today. It is built with Kotlin Multiplatform and Compose Mult
 - Meals left this month, how many can still be bought, and meals already bought for next month
 - Cash balance and the last transaction
 - Name, faculty, year of study, index number, card number, and the issue and expiry dates
+- A warning when the card has expired or will within 30 days
 - A few extras, such as the last medical check-up and the transaction counter
 - The raw data exactly as read from the card, to copy or share (useful for adding a new kind of card)
 

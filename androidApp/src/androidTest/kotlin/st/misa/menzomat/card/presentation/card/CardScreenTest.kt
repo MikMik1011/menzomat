@@ -9,7 +9,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getPluralString
 import org.jetbrains.compose.resources.getString
 import org.junit.Rule
 import org.junit.Test
@@ -21,6 +26,7 @@ import st.misa.menzomat.card.domain.model.MealBalance
 import st.misa.menzomat.card.domain.model.NfcStatus
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.StudentCard
+import st.misa.menzomat.card.domain.model.Validity
 import st.misa.menzomat.core.domain.desfire.Aid
 import st.misa.menzomat.core.domain.desfire.AppDump
 import st.misa.menzomat.core.domain.desfire.CardDump
@@ -30,6 +36,10 @@ import st.misa.menzomat.shared.resources.delete_data_cancel
 import st.misa.menzomat.shared.resources.delete_data_confirm
 import st.misa.menzomat.shared.resources.delete_data_title
 import st.misa.menzomat.shared.resources.error_dismiss
+import st.misa.menzomat.shared.resources.expiry_ago
+import st.misa.menzomat.shared.resources.expiry_soon
+import st.misa.menzomat.shared.resources.expiry_today
+import st.misa.menzomat.shared.resources.expiry_yesterday
 import st.misa.menzomat.shared.resources.error_tag_lost
 import st.misa.menzomat.shared.resources.meals_breakfast
 import st.misa.menzomat.shared.resources.meals_dinner
@@ -50,6 +60,7 @@ import st.misa.menzomat.shared.resources.unrecognized_title
 import st.misa.menzomat.ui.platform.LocalPlatformServices
 import st.misa.menzomat.testPlatform
 import st.misa.menzomat.ui.theme.MenzomatTheme
+import kotlin.time.Clock
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -74,7 +85,17 @@ class CardScreenTest {
         cashBalanceRsd = 48,
     )
 
-    private fun decoded(isAuto: Boolean = true, isLowConfidence: Boolean = false, betterMatch: ProfileCandidate? = null) = CardContent.Decoded(
+    private val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    private fun validUntil(daysFromToday: Int) =
+        card.copy(validity = Validity(issuedOn = null, cardValidUntil = today.plus(DatePeriod(days = daysFromToday)), validatedUntil = null))
+
+    private fun decoded(
+        isAuto: Boolean = true,
+        isLowConfidence: Boolean = false,
+        betterMatch: ProfileCandidate? = null,
+        card: StudentCard = this.card,
+    ) = CardContent.Decoded(
         card = card,
         dump = dump,
         profile = uns,
@@ -244,6 +265,39 @@ class CardScreenTest {
     fun withoutASavedCardThereIsNothingToDelete() {
         show(CardUiState(isLoaded = true))
         rule.onNodeWithContentDescription(string(Res.string.action_delete_data)).assertDoesNotExist()
+    }
+
+    @Test
+    fun aCardThatExpiredYesterdaySaysSo() {
+        show(CardUiState(isLoaded = true, content = decoded(card = validUntil(-1))))
+        rule.onNodeWithText(string(Res.string.expiry_yesterday)).assertIsDisplayed()
+    }
+
+    @Test
+    fun aCardThatExpiredEarlierSaysHowLongAgo() {
+        show(CardUiState(isLoaded = true, content = decoded(card = validUntil(-5))))
+        val message = runBlocking { getPluralString(Res.plurals.expiry_ago, 5, 5) }
+        rule.onNodeWithText(message).assertIsDisplayed()
+    }
+
+    @Test
+    fun aCardAboutToExpireSaysHowSoon() {
+        show(CardUiState(isLoaded = true, content = decoded(card = validUntil(10))))
+        val message = runBlocking { getPluralString(Res.plurals.expiry_soon, 10, 10) }
+        rule.onNodeWithText(message).assertIsDisplayed()
+    }
+
+    @Test
+    fun aCardThatExpiresTodaySaysSo() {
+        show(CardUiState(isLoaded = true, content = decoded(card = validUntil(0))))
+        rule.onNodeWithText(string(Res.string.expiry_today)).assertIsDisplayed()
+    }
+
+    @Test
+    fun aCardThatIsValidForLongerShowsNoWarning() {
+        show(CardUiState(isLoaded = true, content = decoded(card = validUntil(400))))
+        rule.onNodeWithText(string(Res.string.expiry_today)).assertDoesNotExist()
+        rule.onNodeWithText(string(Res.string.expiry_yesterday)).assertDoesNotExist()
     }
 
     @Test

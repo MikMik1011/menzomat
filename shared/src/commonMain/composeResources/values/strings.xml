@@ -35,6 +35,18 @@
     <string name="unrecognized_pick">Probaj sa profilom…</string>
 
     <string name="holder_unknown">Nepoznat korisnik</string>
+    <string name="expiry_today">Kartica ističe danas</string>
+    <string name="expiry_yesterday">Kartica je istekla juče</string>
+    <plurals name="expiry_ago">
+        <item quantity="one">Kartica je istekla pre %1$d dan</item>
+        <item quantity="few">Kartica je istekla pre %1$d dana</item>
+        <item quantity="other">Kartica je istekla pre %1$d dana</item>
+    </plurals>
+    <plurals name="expiry_soon">
+        <item quantity="one">Kartica ističe za %1$d dan</item>
+        <item quantity="few">Kartica ističe za %1$d dana</item>
+        <item quantity="other">Kartica ističe za %1$d dana</item>
+    </plurals>
     <string name="study_year">%1$d. godina</string>
 
     <string name="meals_breakfast">Doručak</string>

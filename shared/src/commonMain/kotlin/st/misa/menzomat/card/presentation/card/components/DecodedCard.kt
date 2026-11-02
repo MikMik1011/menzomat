@@ -20,6 +20,7 @@ internal fun DecodedCard(content: CardContent.Decoded, actions: CardActions, isW
     val card = content.card
     val primary: @Composable ColumnScope.() -> Unit = {
         HolderHeader(card)
+        ExpiryBanner(card.validity)
         MealsHero(card)
         AccountSection(card)
     }

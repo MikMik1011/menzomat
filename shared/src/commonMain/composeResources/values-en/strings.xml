@@ -35,6 +35,16 @@
     <string name="unrecognized_pick">Try a profile…</string>
 
     <string name="holder_unknown">Unknown cardholder</string>
+    <string name="expiry_today">Card expires today</string>
+    <string name="expiry_yesterday">Card expired yesterday</string>
+    <plurals name="expiry_ago">
+        <item quantity="one">Card expired %1$d day ago</item>
+        <item quantity="other">Card expired %1$d days ago</item>
+    </plurals>
+    <plurals name="expiry_soon">
+        <item quantity="one">Card expires in %1$d day</item>
+        <item quantity="other">Card expires in %1$d days</item>
+    </plurals>
     <string name="study_year">Year %1$d</string>
 
     <string name="meals_breakfast">Breakfast</string>
