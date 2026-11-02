@@ -73,14 +73,18 @@ internal fun mediumDateFormatter(locale: Locale): DateTimeFormatter =
         DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
     }
 
+/** "October 2026" in the locale's own words, always starting with a capital: Serbian writes its months in lower case. */
+internal fun monthYearText(month: java.time.YearMonth, locale: Locale): String =
+    DateTimeFormatter.ofPattern("LLLL yyyy", locale).format(month).replaceFirstChar { it.titlecase(locale) }
+
 private class AndroidDateFormatter : DateFormatter {
-    private val medium = mediumDateFormatter(Locale.getDefault())
-    private val monthYear = DateTimeFormatter.ofPattern("LLLL yyyy")
+    private val locale = Locale.getDefault()
+    private val medium = mediumDateFormatter(locale)
 
     override fun mediumDate(date: LocalDate): String = medium.format(date.toJavaLocalDate())
 
     override fun monthAndYear(month: YearMonth): String =
-        monthYear.format(java.time.YearMonth.of(month.year, month.month.ordinal + 1))
+        monthYearText(java.time.YearMonth.of(month.year, month.month.ordinal + 1), locale)
 }
 
 private class AndroidThemePlatform : ThemePlatform {
