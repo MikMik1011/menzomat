@@ -42,7 +42,7 @@ class ContrastTest {
     fun `dark scheme is readable`() = check("dark", MenzomatDarkColors)
 
     @Test
-    fun `highlight carries brand black text`() {
+    fun `highlight carries near black text`() {
         val ratio = contrast(MenzomatBrandColors.highlight, MenzomatBrandColors.onHighlight)
         assertTrue(ratio >= TEXT, "highlight contrast $ratio")
     }

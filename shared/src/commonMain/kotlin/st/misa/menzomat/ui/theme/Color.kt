@@ -13,16 +13,10 @@ import androidx.compose.ui.graphics.luminance
 
 /**
  * ISIC brand palette (brandguide.isic.cz/color). This is the only file that contains color literals.
- * The guide asks for no new colors, so surface tones are blends of brand tints, not new hues.
+ * Brand Black is left out: it is a violet black that clashes with the green, so text and surfaces use [Neutral].
  */
 private object Isic {
     val White = Color(0xFFFFFFFF)
-
-    val SlateBlue = Color(0xFF5438DC)
-    val SlateBlue50 = Color(0xFFF5F3FD)
-    val SlateBlue300 = Color(0xFF9888EA)
-    val SlateBlue700 = Color(0xFF3921A9)
-    val SlateBlue900 = Color(0xFF231651)
 
     val Sea = Color(0xFF40B8B8)
     val Sea50 = Color(0xFFE3F5F5)
@@ -38,12 +32,27 @@ private object Isic {
     val Khaki = Color(0xFFFFE66D)
     val KhakiTint = Color(0xFFFFF6C8)
     val KhakiDeep = Color(0xFF92864E)
+}
 
-    val Ink = Color(0xFF120B29)
-    val Ink50 = Color(0xFFDCDAE3)
-    val Ink400 = Color(0xFF726A90)
-    val Ink600 = Color(0xFF4F4574)
-    val Ink800 = Color(0xFF201749)
+/**
+ * Near-neutral grays with a faint Light Sea Green tint, the tones Material derives for a teal seed (as with
+ * wallpaper colors). Named by tone: 0 is black, 100 white. Variant tones carry a little more of the tint.
+ */
+private object Neutral {
+    val T4 = Color(0xFF090F10)
+    val T6 = Color(0xFF0E1415)
+    val T10 = Color(0xFF161D1E)
+    val T12 = Color(0xFF1A2122)
+    val T17 = Color(0xFF252B2C)
+    val T20 = Color(0xFF2B3132)
+    val T22 = Color(0xFF2F3637)
+    val T24 = Color(0xFF343A3B)
+    val T90 = Color(0xFFDEE4E4)
+    val Variant30 = Color(0xFF3F4949)
+    val Variant50 = Color(0xFF6F7979)
+    val Variant60 = Color(0xFF899392)
+    val Variant80 = Color(0xFFBEC8C8)
+    val Variant90 = Color(0xFFDAE4E4)
 }
 
 /** Standard Material error roles; ISIC has no error color and Tomato must not read as one. */
@@ -56,17 +65,17 @@ private object MaterialError {
     val DarkContainer = Color(0xFF8C1D18)
 }
 
-/** Light: the Light Sea Green fills the hero surfaces and always carries brand Black text. */
+/** Light: the Light Sea Green fills the hero surfaces and always carries near-black text. */
 internal val MenzomatLightColors: ColorScheme = lightColorScheme(
     primary = Isic.Sea600,
     onPrimary = Isic.White,
     primaryContainer = Isic.Sea,
-    onPrimaryContainer = Isic.Ink,
+    onPrimaryContainer = Neutral.T6,
     inversePrimary = Isic.Sea300,
-    secondary = Isic.SlateBlue,
+    secondary = Isic.Sea800,
     onSecondary = Isic.White,
-    secondaryContainer = Isic.SlateBlue50,
-    onSecondaryContainer = Isic.SlateBlue900,
+    secondaryContainer = lerp(Isic.Sea50, Isic.Sea300, 0.5f),
+    onSecondaryContainer = Neutral.T10,
     tertiary = Isic.Tomato600,
     onTertiary = Isic.White,
     tertiaryContainer = Isic.Tomato50,
@@ -76,19 +85,19 @@ internal val MenzomatLightColors: ColorScheme = lightColorScheme(
     errorContainer = MaterialError.LightContainer,
     onErrorContainer = MaterialError.OnLightContainer,
     background = Isic.White,
-    onBackground = Isic.Ink,
+    onBackground = Neutral.T10,
     surface = Isic.White,
-    onSurface = Isic.Ink,
-    surfaceVariant = Isic.Ink50,
-    onSurfaceVariant = Isic.Ink600,
+    onSurface = Neutral.T10,
+    surfaceVariant = Neutral.Variant90,
+    onSurfaceVariant = Neutral.Variant30,
     surfaceTint = Isic.Sea600,
-    inverseSurface = Isic.Ink,
+    inverseSurface = Neutral.T20,
     inverseOnSurface = Isic.Sea50,
-    outline = Isic.Ink400,
-    outlineVariant = Isic.Ink50,
-    scrim = Isic.Ink,
+    outline = Neutral.Variant50,
+    outlineVariant = Neutral.Variant80,
+    scrim = Color.Black,
     surfaceBright = Isic.White,
-    surfaceDim = lerp(Isic.Sea50, Isic.Ink50, 0.5f),
+    surfaceDim = lerp(Isic.Sea50, Neutral.Variant90, 0.5f),
     surfaceContainerLowest = Isic.White,
     surfaceContainerLow = lerp(Isic.White, Isic.Sea50, 0.5f),
     surfaceContainer = lerp(Isic.White, Isic.Sea50, 0.8f),
@@ -98,41 +107,41 @@ internal val MenzomatLightColors: ColorScheme = lightColorScheme(
 
 internal val MenzomatDarkColors: ColorScheme = darkColorScheme(
     primary = Isic.Sea,
-    onPrimary = Isic.Ink,
+    onPrimary = Neutral.T6,
     primaryContainer = Isic.Sea800,
     onPrimaryContainer = Isic.Sea50,
     inversePrimary = Isic.Sea600,
-    secondary = Isic.SlateBlue300,
-    onSecondary = Isic.Ink,
-    secondaryContainer = Isic.SlateBlue700,
-    onSecondaryContainer = Isic.SlateBlue50,
+    secondary = Isic.Sea300,
+    onSecondary = Neutral.T6,
+    secondaryContainer = lerp(Neutral.Variant30, Isic.Sea800, 0.25f),
+    onSecondaryContainer = Isic.Sea50,
     tertiary = Isic.Tomato300,
-    onTertiary = Isic.Ink,
+    onTertiary = Neutral.T6,
     tertiaryContainer = Isic.Tomato900,
     onTertiaryContainer = Isic.Tomato50,
     error = MaterialError.Dark,
     onError = MaterialError.OnDark,
     errorContainer = MaterialError.DarkContainer,
     onErrorContainer = MaterialError.LightContainer,
-    background = Isic.Ink,
-    onBackground = Isic.Sea50,
-    surface = Isic.Ink,
-    onSurface = Isic.Sea50,
-    surfaceVariant = Isic.Ink600,
-    onSurfaceVariant = Isic.Ink50,
+    background = Neutral.T6,
+    onBackground = Neutral.T90,
+    surface = Neutral.T6,
+    onSurface = Neutral.T90,
+    surfaceVariant = Neutral.Variant30,
+    onSurfaceVariant = Neutral.Variant80,
     surfaceTint = Isic.Sea,
-    inverseSurface = Isic.Sea50,
-    inverseOnSurface = Isic.Ink,
-    outline = Isic.Ink400,
-    outlineVariant = Isic.Ink600,
-    scrim = Isic.Ink,
-    surfaceBright = lerp(Isic.Ink800, Isic.Ink600, 0.55f),
-    surfaceDim = Isic.Ink,
-    surfaceContainerLowest = lerp(Isic.Ink, Color.Black, 0.4f),
-    surfaceContainerLow = lerp(Isic.Ink, Isic.Ink800, 0.5f),
-    surfaceContainer = Isic.Ink800,
-    surfaceContainerHigh = lerp(Isic.Ink800, Isic.Ink600, 0.3f),
-    surfaceContainerHighest = lerp(Isic.Ink800, Isic.Ink600, 0.55f),
+    inverseSurface = Neutral.T90,
+    inverseOnSurface = Neutral.T20,
+    outline = Neutral.Variant60,
+    outlineVariant = Neutral.Variant30,
+    scrim = Color.Black,
+    surfaceBright = Neutral.T24,
+    surfaceDim = Neutral.T6,
+    surfaceContainerLowest = Neutral.T4,
+    surfaceContainerLow = Neutral.T10,
+    surfaceContainer = Neutral.T12,
+    surfaceContainerHigh = Neutral.T17,
+    surfaceContainerHighest = Neutral.T22,
 )
 
 /** Brand colors that have no Material role. Khaki is an accent: used sparingly, per the guide's proportions. */
@@ -142,7 +151,7 @@ class BrandColors(
     val onHighlight: Color,
 )
 
-internal val MenzomatBrandColors = BrandColors(highlight = Isic.Khaki, onHighlight = Isic.Ink)
+internal val MenzomatBrandColors = BrandColors(highlight = Isic.Khaki, onHighlight = Neutral.T6)
 
 /**
  * A warning in a calm tint, with the text in the normal text color. Dark: the brand Khaki mixed into the surface,
