@@ -46,6 +46,7 @@
         <item quantity="other">Card expires in %1$d days</item>
     </plurals>
     <string name="study_year">Year %1$d</string>
+    <string name="study_year_master">Master's year %1$d</string>
 
     <string name="meals_breakfast">Breakfast</string>
     <string name="meals_lunch">Lunch</string>

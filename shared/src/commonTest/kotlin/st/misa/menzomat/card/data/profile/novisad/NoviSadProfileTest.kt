@@ -4,6 +4,7 @@ import st.misa.menzomat.card.domain.model.DecodeWarning
 import st.misa.menzomat.card.domain.model.ExtraValue
 import st.misa.menzomat.card.domain.model.Faculty
 import st.misa.menzomat.card.domain.model.MealBalance
+import st.misa.menzomat.card.domain.model.StudyLevel
 import st.misa.menzomat.card.domain.model.WarningReason
 import st.misa.menzomat.core.domain.desfire.Aid
 import st.misa.menzomat.core.domain.desfire.AppDump
@@ -95,6 +96,25 @@ class NoviSadProfileTest {
     fun `a card that was not renewed shows the year written on it`() {
         val card = decode(currentCard.with(6 to padded("160a18 160a18 00 010100", 24)))
         assertEquals(3, card.institution?.studyYear)
+    }
+
+    @Test
+    fun `a first year master student is stored as year 10`() {
+        val card = decode(currentCard.with(6 to padded("160a18 160a18 00 010100", 24), 7 to padded("040a06 3230392f3232", 22)))
+        assertEquals(1, card.institution?.studyYear)
+        assertEquals(StudyLevel.Master, card.institution?.studyLevel)
+    }
+
+    @Test
+    fun `a renewed first year master card is in the second year of master studies`() {
+        val card = decode(currentCard.with(7 to padded("040a06 3230392f3232", 22)))
+        assertEquals(2, card.institution?.studyYear)
+        assertEquals(StudyLevel.Master, card.institution?.studyLevel)
+    }
+
+    @Test
+    fun `a year below 10 is undergraduate`() {
+        assertEquals(StudyLevel.Undergraduate, decode().institution?.studyLevel)
     }
 
     @Test

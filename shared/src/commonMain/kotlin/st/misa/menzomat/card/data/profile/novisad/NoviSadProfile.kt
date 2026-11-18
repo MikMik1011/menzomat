@@ -10,6 +10,7 @@ import st.misa.menzomat.card.domain.model.Holder
 import st.misa.menzomat.card.domain.model.Institution
 import st.misa.menzomat.card.domain.model.MealBalance
 import st.misa.menzomat.card.domain.model.StudentCard
+import st.misa.menzomat.card.domain.model.StudyLevel
 import st.misa.menzomat.card.domain.model.Transaction
 import st.misa.menzomat.card.domain.model.Validity
 import st.misa.menzomat.card.domain.model.WarningReason
@@ -125,15 +126,19 @@ internal class NoviSadProfile : CardProfile {
             }
         }
 
+        // File 0x07 still holds the year from before the yearly renewal. The validated-until date in
+        // 0x06 only exists once the card has been renewed, so its presence means one more year.
+        val storedYear = studentFile?.studyYear?.let { if (validatedUntil != null) it + 1 else it }
+        val isMaster = storedYear != null && storedYear >= NoviSadLayout.FIRST_MASTER_YEAR
+
         return StudentCard(
             holder = holder,
             cardNumber = cardFile?.number?.takeIf { it.isNotEmpty() },
             institution = Institution(
                 name = displayName,
                 faculty = studentFile?.let { Faculty(it.facultyId, NoviSadLayout.facultyKeys[it.facultyId]) },
-                // File 0x07 still holds the year from before the yearly renewal. The validated-until date in
-                // 0x06 only exists once the card has been renewed, so its presence means one more year.
-                studyYear = studentFile?.studyYear?.let { if (validatedUntil != null) it + 1 else it },
+                studyYear = if (isMaster) storedYear - NoviSadLayout.FIRST_MASTER_YEAR + 1 else storedYear,
+                studyLevel = if (isMaster) StudyLevel.Master else StudyLevel.Undergraduate,
                 studentId = studentFile?.studentId?.takeIf { it.isNotEmpty() },
             ),
             validity = validity,

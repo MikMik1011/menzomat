@@ -12,6 +12,7 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.domain.model.Faculty
 import st.misa.menzomat.card.domain.model.StudentCard
+import st.misa.menzomat.card.domain.model.StudyLevel
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.faculty_number
 import st.misa.menzomat.shared.resources.faculty_uns_ff
@@ -20,6 +21,7 @@ import st.misa.menzomat.shared.resources.faculty_uns_pmf
 import st.misa.menzomat.shared.resources.faculty_uns_polj
 import st.misa.menzomat.shared.resources.holder_unknown
 import st.misa.menzomat.shared.resources.study_year
+import st.misa.menzomat.shared.resources.study_year_master
 import st.misa.menzomat.ui.theme.spacing
 
 /** The name of a faculty the app knows, in the user's language. Any other faculty shows as "Faculty N". */
@@ -38,7 +40,10 @@ internal fun HolderHeader(card: StudentCard) {
     val institution = card.institution
     val faculty = institution?.faculty?.let { facultyName(it) }
     val studies = listOfNotNull(
-        institution?.studyYear?.let { stringResource(Res.string.study_year, it) },
+        institution?.studyYear?.let {
+            val words = if (institution.studyLevel == StudyLevel.Master) Res.string.study_year_master else Res.string.study_year
+            stringResource(words, it)
+        },
         institution?.studentId,
     ).joinToString(" · ")
     Column(Modifier.padding(horizontal = MaterialTheme.spacing.small)) {

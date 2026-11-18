@@ -26,6 +26,9 @@ internal object NoviSadLayout {
         0x06 to 24, 0x07 to 22, 0x08 to 6, 0x09 to 128, 0x0A to 7,
     )
 
+    /** The study year in file 0x07 counts master's years from 10, so the first year of a master's is stored as 10. */
+    const val FIRST_MASTER_YEAR = 10
+
     /**
      * Faculty id (first byte of file 0x07) to the key the app words in each language. Other ids show as
      * "Faculty N". Add the name in both string files when adding one here.

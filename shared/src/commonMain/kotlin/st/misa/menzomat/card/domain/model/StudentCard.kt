@@ -27,9 +27,14 @@ data class Holder(
 data class Institution(
     val name: String,
     val faculty: Faculty? = null,
+    /** The year within [studyLevel], so the first year of a master's is 1. */
     val studyYear: Int? = null,
+    val studyLevel: StudyLevel = StudyLevel.Undergraduate,
     val studentId: String? = null,
 )
+
+/** Undergraduate covers bachelor's and integrated studies. */
+enum class StudyLevel { Undergraduate, Master }
 
 /** The card names a faculty by number. [key] says which faculty it is when the profile knows, and the app words it. */
 data class Faculty(val id: Int, val key: String? = null)

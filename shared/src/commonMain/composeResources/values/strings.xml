@@ -48,6 +48,7 @@
         <item quantity="other">Kartica ističe za %1$d dana</item>
     </plurals>
     <string name="study_year">%1$d. godina</string>
+    <string name="study_year_master">%1$d. godina master studija</string>
 
     <string name="meals_breakfast">Doručak</string>
     <string name="meals_lunch">Ručak</string>

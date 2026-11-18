@@ -67,6 +67,7 @@ AID `0D 00 00` on the wire (the profile accepts `0x00000D` and `0x0D0000`), file
 Rules that came from real cards and from the user:
 - Months in files 0x01 and 0x04 are 0-based on old terminal software and 1-based on newer; 0x02, 0x06, 0x09 are always 1-based. `resolveTransactionDate` and `resolveCardDate` decide per card.
 - The validated-until date (0x06) exists only once the card is renewed. The app does not show it; its presence adds 1 to the study year stored in 0x07.
+- Master's years are stored from 10 (`NoviSadLayout.FIRST_MASTER_YEAR`): a first-year master's card holds 10, and the second year is that card renewed (10 + 1), shown as "master's year 2" (`StudyLevel.Master`).
 - The holder's national id (JMBG) is deliberately never decoded, shown or masked. Do not add it back. It stays in the raw data, which is the card as read.
 - A card expires on the later of its two dates (`Validity.expiresOn`), so a renewed card is never flagged. `expiryWarning(validity, today)` returns `Expired` once that day has passed and `ExpiresSoon` from `EXPIRES_SOON_DAYS` (30) before it; `ExpiryBanner` shows it above the meals. Pass `today` in tests, never read the clock inside the logic.
 - Faculty ids 1, 2, 4 and 6 are known (Technical Sciences, Philosophy, Sciences, Agriculture) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
