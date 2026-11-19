@@ -1,11 +1,17 @@
 package st.misa.menzomat.ui.platform
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.ClipData
+import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Intent
+import android.content.pm.LabeledIntent
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Build
+import android.os.Parcelable
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.ColorScheme
@@ -14,9 +20,13 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.toJavaLocalDate
+import java.io.File
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -26,6 +36,7 @@ fun androidPlatformServices(activity: ComponentActivity): PlatformServices = Pla
     shareSheet = AndroidShareSheet(activity),
     clipboard = AndroidTextClipboard(activity),
     fileSaver = AndroidFileSaver(activity),
+    bugReporter = AndroidBugReporter(activity),
     nfcSettings = AndroidNfcSettings(activity),
     dateFormatter = AndroidDateFormatter(),
     theme = AndroidThemePlatform(),
@@ -55,6 +66,75 @@ private class AndroidTextClipboard(private val activity: Activity) : TextClipboa
         clipboard.setPrimaryClip(ClipData.newPlainText("card", text))
     }
 }
+
+/**
+ * The email apps are listed by hand: a send intent alone would offer every chat app, and a `mailto:` selector on it
+ * makes the system's chooser show just one.
+ */
+private class AndroidBugReporter(private val activity: Activity) : BugReporter {
+    override suspend fun compose(address: String, subject: String, body: String, attachment: TextAttachment?): Boolean {
+        val uri = attachment?.let { cacheAndShare(it) ?: return false }
+        val mimeType = attachment?.mimeType ?: "text/plain"
+        val mail = Intent(Intent.ACTION_SEND)
+            .setType(mimeType)
+            .putExtra(Intent.EXTRA_EMAIL, arrayOf(address))
+            .putExtra(Intent.EXTRA_SUBJECT, subject)
+            .putExtra(Intent.EXTRA_TEXT, body)
+        if (attachment != null && uri != null) {
+            mail.putExtra(Intent.EXTRA_STREAM, uri)
+            mail.clipData = ClipData(ClipDescription(attachment.fileName, arrayOf(attachment.mimeType)), ClipData.Item(uri))
+            mail.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+
+        val apps = emailApps(mimeType)
+        if (apps.isEmpty()) return false
+        val intents = apps.map { Intent(mail).setClassName(it.activityInfo.packageName, it.activityInfo.name) }
+        val launch = if (intents.size == 1) {
+            intents.single()
+        } else {
+            val others = apps.zip(intents).dropLast(1).map { (app, intent) ->
+                LabeledIntent(intent, app.activityInfo.packageName, app.loadLabel(activity.packageManager), app.iconResource)
+            }
+            Intent.createChooser(intents.last(), null).putExtra(Intent.EXTRA_INITIAL_INTENTS, others.toTypedArray<Parcelable>())
+        }
+        return try {
+            activity.startActivity(launch)
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        }
+    }
+
+    private fun emailApps(mimeType: String): List<ResolveInfo> {
+        val packageManager = activity.packageManager
+        val sharing = packageManager.handlersOf(Intent(Intent.ACTION_SEND).setType(mimeType))
+            .mapTo(HashSet()) { it.activityInfo.packageName to it.activityInfo.name }
+        return packageManager.handlersOf(Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:")))
+            .filter { (it.activityInfo.packageName to it.activityInfo.name) in sharing }
+    }
+
+    /** Only the latest report is kept: it holds personal data. */
+    private suspend fun cacheAndShare(attachment: TextAttachment): Uri? = withContext(Dispatchers.IO) {
+        runCatching {
+            val folder = File(activity.cacheDir, REPORT_FOLDER).apply { mkdirs() }
+            folder.listFiles()?.forEach { it.delete() }
+            val file = File(folder, attachment.fileName).apply { writeText(attachment.text) }
+            FileProvider.getUriForFile(activity, "${activity.packageName}.fileprovider", file)
+        }.getOrNull()
+    }
+
+    private companion object {
+        const val REPORT_FOLDER = "reports"
+    }
+}
+
+private fun PackageManager.handlersOf(intent: Intent): List<ResolveInfo> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        queryIntentActivities(intent, PackageManager.ResolveInfoFlags.of(0))
+    } else {
+        @Suppress("DEPRECATION")
+        queryIntentActivities(intent, 0)
+    }
 
 private class AndroidNfcSettings(private val activity: Activity) : NfcSettings {
     override fun open() {

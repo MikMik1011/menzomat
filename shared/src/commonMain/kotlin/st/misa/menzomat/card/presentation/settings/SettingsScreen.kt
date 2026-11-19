@@ -23,26 +23,39 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.Role
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.ThemeMode
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.about_license
+import st.misa.menzomat.shared.resources.about_report
 import st.misa.menzomat.shared.resources.about_source
 import st.misa.menzomat.shared.resources.about_version
+import st.misa.menzomat.shared.resources.report_description
+import st.misa.menzomat.shared.resources.report_faculty
+import st.misa.menzomat.shared.resources.report_failed
+import st.misa.menzomat.shared.resources.report_subject
+import st.misa.menzomat.shared.resources.report_university
 import st.misa.menzomat.shared.resources.settings_about_section
 import st.misa.menzomat.shared.resources.settings_back
 import st.misa.menzomat.shared.resources.settings_dynamic_color
@@ -67,7 +80,31 @@ fun SettingsRoute(
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    SettingsScreen(state, viewModel, onBack, modifier)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val platform = LocalPlatformServices.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val subject = stringResource(Res.string.report_subject, platform.appInfo.versionName)
+    val university = stringResource(Res.string.report_university)
+    val faculty = stringResource(Res.string.report_faculty)
+    val description = stringResource(Res.string.report_description)
+    val failedMessage = stringResource(Res.string.report_failed)
+
+    LaunchedEffect(viewModel, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.effects.collect { effect ->
+                when (effect) {
+                    is SettingsEffect.ReportBug -> {
+                        val form = "$university: \n$faculty: \n$description:\n"
+                        if (!platform.bugReporter.compose(BUG_REPORT_ADDRESS, subject, form, effect.attachment)) {
+                            snackbarHostState.showSnackbar(failedMessage)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    SettingsScreen(state, viewModel, onBack, modifier, snackbarHostState)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,10 +114,12 @@ fun SettingsScreen(
     actions: SettingsActions,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val colors = MaterialTheme.colorScheme
     Scaffold(
         modifier = modifier,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(Res.string.settings_title)) },
@@ -108,7 +147,7 @@ fun SettingsScreen(
             ) {
                 ProfileSection(state, actions)
                 ThemeSection(state, actions)
-                AboutSection()
+                AboutSection(actions)
             }
         }
     }
@@ -164,20 +203,26 @@ private fun ThemeSection(state: SettingsUiState, actions: SettingsActions) {
 }
 
 @Composable
-private fun AboutSection() {
+private fun AboutSection(actions: SettingsActions) {
     SectionTitle(stringResource(Res.string.settings_about_section))
     val version = LocalPlatformServices.current.appInfo.versionName
     if (version.isNotBlank()) InfoRow(stringResource(Res.string.about_version), version)
     LinkRow(stringResource(Res.string.about_source), SOURCE_URL)
     LinkRow(stringResource(Res.string.about_license), LICENSE_URL)
+    ExternalRow(stringResource(Res.string.about_report), actions::onReportBug)
 }
 
-/** A row that opens [url] outside the app; the trailing icon says so. */
 @Composable
 private fun LinkRow(label: String, url: String) {
     val uriHandler = LocalUriHandler.current
+    ExternalRow(label) { runCatching { uriHandler.openUri(url) } }
+}
+
+/** A row that leaves the app when tapped; the trailing icon says so. */
+@Composable
+private fun ExternalRow(label: String, onClick: () -> Unit) {
     ListItem(
-        modifier = Modifier.clickable(role = Role.Button) { runCatching { uriHandler.openUri(url) } },
+        modifier = Modifier.clickable(role = Role.Button, onClick = onClick),
         headlineContent = { Text(label) },
         trailingContent = { Icon(Icons.AutoMirrored.Rounded.OpenInNew, contentDescription = null) },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),

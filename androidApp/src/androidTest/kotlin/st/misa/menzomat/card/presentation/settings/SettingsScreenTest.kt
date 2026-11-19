@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.about_license
+import st.misa.menzomat.shared.resources.about_report
 import st.misa.menzomat.shared.resources.about_source
 import st.misa.menzomat.testPlatform
 import st.misa.menzomat.ui.platform.LocalPlatformServices
@@ -29,12 +30,12 @@ class SettingsScreenTest {
 
     private val opened = mutableListOf<String>()
 
-    private fun show() {
+    private fun show(actions: SettingsActions = NoSettingsActions) {
         val uriHandler = object : UriHandler { override fun openUri(uri: String) { opened += uri } }
         rule.setContent {
             CompositionLocalProvider(LocalPlatformServices provides testPlatform, LocalUriHandler provides uriHandler) {
                 MenzomatTheme {
-                    SettingsScreen(SettingsUiState(), NoSettingsActions, onBack = {})
+                    SettingsScreen(SettingsUiState(), actions, onBack = {})
                 }
             }
         }
@@ -60,5 +61,17 @@ class SettingsScreenTest {
             ),
             opened,
         )
+    }
+
+    @Test
+    fun reportingABugIsOfferedInAbout() {
+        var reported = 0
+        val actions = object : SettingsActions by NoSettingsActions {
+            override fun onReportBug() { reported++ }
+        }
+        show(actions)
+
+        rule.onNodeWithText(string(Res.string.about_report)).performScrollTo().assertIsDisplayed().performClick()
+        assertEquals(1, reported)
     }
 }

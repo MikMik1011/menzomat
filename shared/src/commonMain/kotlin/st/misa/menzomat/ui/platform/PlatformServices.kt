@@ -27,6 +27,13 @@ interface FileSaver {
     suspend fun saveText(suggestedName: String, text: String): Boolean
 }
 
+data class TextAttachment(val fileName: String, val text: String, val mimeType: String)
+
+/** Opens a draft in the user's email app; nothing is sent until the user sends it. Returns false when none could be opened. */
+interface BugReporter {
+    suspend fun compose(address: String, subject: String, body: String, attachment: TextAttachment?): Boolean
+}
+
 /** Takes the user to wherever NFC can be switched on. Platforms without such a switch do nothing. */
 interface NfcSettings {
     fun open()
@@ -59,6 +66,7 @@ class PlatformServices(
     val shareSheet: ShareSheet,
     val clipboard: TextClipboard,
     val fileSaver: FileSaver,
+    val bugReporter: BugReporter,
     val nfcSettings: NfcSettings,
     val dateFormatter: DateFormatter,
     val theme: ThemePlatform,

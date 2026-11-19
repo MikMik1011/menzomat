@@ -55,5 +55,5 @@ val sharedModule = module {
     single { ProfileResolver(get()) }
 
     viewModel { CardViewModel(get(), get(), get()) }
-    viewModel { SettingsViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get()) }
 }

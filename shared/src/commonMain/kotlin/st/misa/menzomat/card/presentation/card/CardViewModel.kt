@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import st.misa.menzomat.card.domain.model.CardReadError
 import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.ScanEvent
@@ -24,6 +23,7 @@ import st.misa.menzomat.card.domain.profile.Scored
 import st.misa.menzomat.card.domain.repository.CardRepository
 import st.misa.menzomat.card.domain.repository.SettingsRepository
 import st.misa.menzomat.core.domain.desfire.CardDump
+import st.misa.menzomat.core.domain.desfire.toJson
 
 class CardViewModel(
     private val repository: CardRepository,
@@ -122,8 +122,6 @@ class CardViewModel(
         CardContent.Empty -> null
     }
 
-    private fun CardDump.toJson(): String = json.encodeToString(CardDump.serializer(), this)
-
     private fun contentFor(dump: CardDump, selection: ProfileSelection): CardContent =
         when (val resolution = resolver.resolve(dump, selection)) {
             is Resolution.Resolved -> CardContent.Decoded(
@@ -152,6 +150,5 @@ class CardViewModel(
 
     private companion object {
         const val STOP_TIMEOUT_MS = 5_000L
-        val json = Json { prettyPrint = true }
     }
 }

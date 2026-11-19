@@ -96,6 +96,12 @@
     <string name="dump_copied">Copied</string>
     <string name="dump_saved">Saved</string>
     <string name="dump_save_failed">Could not save</string>
+    <string name="report_subject">Menzomat bug report %1$s</string>
+    <string name="report_university">University</string>
+    <string name="report_faculty">Faculty</string>
+    <string name="report_description">Bug description</string>
+    <string name="report_failed">Could not open email</string>
+    <string name="about_report">Report a bug</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
