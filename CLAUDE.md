@@ -15,7 +15,7 @@ Gradle needs JDK 17 (set `JAVA_HOME` if it is not the default).
 | Check commonMain uses only common APIs | `./gradlew :shared:compileCommonMainKotlinMetadata` |
 | Install, debug | `./gradlew :androidApp:installDebug` |
 | Install, release-like (for judging smoothness) | `./gradlew :androidApp:installBenchmark` |
-| Signed APK to share | `./gradlew :androidApp:assembleRelease`, output in `androidApp/build/outputs/apk/release/` |
+| Signed APK to share | `./gradlew :androidApp:assembleRelease`, output `androidApp/build/outputs/apk/release/menzomat-<versionName>-release.apk` |
 
 Before saying a change is done: unit tests pass, the UI tests compile, and for UI work look at it on the phone.
 
