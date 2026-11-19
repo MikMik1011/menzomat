@@ -15,8 +15,13 @@ Gradle needs JDK 17 (set `JAVA_HOME` if it is not the default).
 | Check commonMain uses only common APIs | `./gradlew :shared:compileCommonMainKotlinMetadata` |
 | Install, debug | `./gradlew :androidApp:installDebug` |
 | Install, release-like (for judging smoothness) | `./gradlew :androidApp:installBenchmark` |
+| Signed APK to share | `./gradlew :androidApp:assembleRelease`, output in `androidApp/build/outputs/apk/release/` |
 
 Before saying a change is done: unit tests pass, the UI tests compile, and for UI work look at it on the phone.
+
+## Alpha builds
+
+Bump `versionCode` (every build) and `versionName` (new for every shared build: `0.1.0-alpha`, `0.1.1-alpha` for a fix, `0.2.0-alpha` for a big change, `-beta` as the stage changes; `1.0.0` is the full release, once every university and faculty is tested and everything is reviewed; shown in Settings) in `androidApp/build.gradle.kts`, then run the release task above. It signs with the keystore named in `keystore.properties` (gitignored; copy `keystore.properties.example`) and leaves the APK unsigned when that file is missing. The keystore lives outside the repo and must never be lost: an update installs only over the same key. Keep `androidApp/build/outputs/mapping/release/mapping.txt` of every shared build, since the release is minified and its crash traces are unreadable without it. A release-signed APK cannot replace a debug- or benchmark-signed install of the same app id; uninstalling first wipes the stored last dump.
 
 ## Working environment
 
