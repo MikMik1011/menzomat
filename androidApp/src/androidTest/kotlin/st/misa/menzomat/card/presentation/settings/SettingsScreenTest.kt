@@ -15,6 +15,7 @@ import org.junit.Rule
 import org.junit.Test
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.about_license
+import st.misa.menzomat.shared.resources.about_privacy
 import st.misa.menzomat.shared.resources.about_report
 import st.misa.menzomat.shared.resources.about_source
 import st.misa.menzomat.testPlatform
@@ -42,22 +43,25 @@ class SettingsScreenTest {
     }
 
     @Test
-    fun aboutShowsTheVersionAndBothLinks() {
+    fun aboutShowsTheVersionAndAllLinks() {
         show()
         rule.onNodeWithText(testPlatform.appInfo.versionName).performScrollTo().assertIsDisplayed()
         rule.onNodeWithText(string(Res.string.about_source)).performScrollTo().assertIsDisplayed()
         rule.onNodeWithText(string(Res.string.about_license)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(string(Res.string.about_privacy)).performScrollTo().assertIsDisplayed()
     }
 
     @Test
-    fun sourceCodeAndLicenseOpenOutsideTheApp() {
+    fun sourceCodeLicenseAndPrivacyPolicyOpenOutsideTheApp() {
         show()
         rule.onNodeWithText(string(Res.string.about_source)).performScrollTo().performClick()
         rule.onNodeWithText(string(Res.string.about_license)).performScrollTo().performClick()
+        rule.onNodeWithText(string(Res.string.about_privacy)).performScrollTo().performClick()
         assertEquals(
             listOf(
                 "https://github.com/MikMik1011/menzomat",
                 "https://github.com/MikMik1011/menzomat/blob/main/LICENSE",
+                "https://github.com/MikMik1011/menzomat/blob/main/docs/privacy-policy.md",
             ),
             opened,
         )

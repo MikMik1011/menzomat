@@ -122,4 +122,5 @@
     <string name="about_version">Verzija</string>
     <string name="about_source">Izvorni kod</string>
     <string name="about_license">Licenca</string>
+    <string name="about_privacy">Politika privatnosti</string>
 </resources>

@@ -48,6 +48,7 @@ import st.misa.menzomat.card.domain.model.ProfileSelection
 import st.misa.menzomat.card.domain.model.ThemeMode
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.about_license
+import st.misa.menzomat.shared.resources.about_privacy
 import st.misa.menzomat.shared.resources.about_report
 import st.misa.menzomat.shared.resources.about_source
 import st.misa.menzomat.shared.resources.about_version
@@ -209,6 +210,7 @@ private fun AboutSection(actions: SettingsActions) {
     if (version.isNotBlank()) InfoRow(stringResource(Res.string.about_version), version)
     LinkRow(stringResource(Res.string.about_source), SOURCE_URL)
     LinkRow(stringResource(Res.string.about_license), LICENSE_URL)
+    LinkRow(stringResource(Res.string.about_privacy), PRIVACY_URL)
     ExternalRow(stringResource(Res.string.about_report), actions::onReportBug)
 }
 
@@ -231,6 +233,7 @@ private fun ExternalRow(label: String, onClick: () -> Unit) {
 
 private const val SOURCE_URL = "https://github.com/MikMik1011/menzomat"
 private const val LICENSE_URL = "$SOURCE_URL/blob/main/LICENSE"
+private const val PRIVACY_URL = "$SOURCE_URL/blob/main/docs/privacy-policy.md"
 
 @Composable
 private fun SectionTitle(text: String) {
