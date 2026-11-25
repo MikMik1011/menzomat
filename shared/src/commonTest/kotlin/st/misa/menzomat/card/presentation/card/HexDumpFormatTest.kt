@@ -42,5 +42,22 @@ class HexDumpFormatTest {
     }
 
     @Test
+    fun `sixteen bytes per line keep the ascii column aligned`() {
+        assertEquals(
+            "0000  " + "41 ".repeat(16) + " " + "A".repeat(16) + "\n" +
+                "0010  41" + " ".repeat(45 + 2) + "A",
+            formatHexDump(ByteArray(17) { 0x41 }, bytesPerLine = 16),
+        )
+    }
+
+    @Test
+    fun `the roomiest raw layout that fits is chosen`() {
+        assertEquals(RawLayout.WideLabelBeside, rawLayout(available = 700, label = 160, wideLine = 540))
+        assertEquals(RawLayout.Wide, rawLayout(available = 699, label = 160, wideLine = 540))
+        assertEquals(RawLayout.Wide, rawLayout(available = 540, label = 160, wideLine = 540))
+        assertEquals(RawLayout.Narrow, rawLayout(available = 539, label = 160, wideLine = 540))
+    }
+
+    @Test
     fun `an empty file is an empty dump`() = assertEquals("", formatHexDump(ByteArray(0)))
 }

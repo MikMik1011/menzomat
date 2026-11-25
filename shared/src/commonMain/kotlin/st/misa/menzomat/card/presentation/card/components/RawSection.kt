@@ -3,6 +3,8 @@ package st.misa.menzomat.card.presentation.card.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.ExpandLess
@@ -33,12 +36,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.rememberTextMeasurer
 import org.jetbrains.compose.resources.stringResource
 import st.misa.menzomat.card.presentation.card.CardActions
+import st.misa.menzomat.card.presentation.card.RawLayout
 import st.misa.menzomat.card.presentation.card.formatHexDump
+import st.misa.menzomat.card.presentation.card.rawLayout
 import st.misa.menzomat.core.domain.desfire.CardDump
+import st.misa.menzomat.core.domain.desfire.RawFile
 import st.misa.menzomat.core.domain.util.hex
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.raw_app
@@ -53,6 +61,7 @@ import st.misa.menzomat.shared.resources.raw_save
 import st.misa.menzomat.shared.resources.raw_share
 import st.misa.menzomat.shared.resources.raw_title
 import st.misa.menzomat.ui.components.HexDump
+import st.misa.menzomat.ui.components.hexDumpStyle
 import st.misa.menzomat.ui.theme.spacing
 
 /** Every file as read from the card, for checking decoded values and for supporting new universities. */
@@ -96,21 +105,7 @@ internal fun RawSection(dump: CardDump, actions: CardActions, initiallyExpanded:
                     dump.apps.forEach { app ->
                         Text(stringResource(Res.string.raw_app, app.aid.toString()), style = MaterialTheme.typography.labelLarge)
                         app.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
-                        app.files.forEach { file ->
-                            val type = file.type?.name ?: "?"
-                            val title = file.size?.let { stringResource(Res.string.raw_file, file.id.hex(2), type, it) }
-                                ?: stringResource(Res.string.raw_file_unknown_size, file.id.hex(2), type)
-                            Text(title, style = MaterialTheme.typography.labelMedium)
-                            val bytes = file.data
-                            when {
-                                bytes != null -> HexDump(formatHexDump(bytes))
-                                else -> Text(
-                                    stringResource(Res.string.raw_file_error, file.id.hex(2), file.error ?: "?"),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.error,
-                                )
-                            }
-                        }
+                        RawFiles(app.files)
                     }
                     Text(
                         stringResource(Res.string.raw_privacy),
@@ -127,6 +122,56 @@ internal fun RawSection(dump: CardDump, actions: CardActions, initiallyExpanded:
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun RawFiles(files: List<RawFile>) {
+    val spacing = MaterialTheme.spacing
+    val measurer = rememberTextMeasurer()
+    val labelStyle = MaterialTheme.typography.labelMedium
+    val labels = files.map { fileLabel(it) }
+    val labelWidth = labels.maxOfOrNull { measurer.measure(it, labelStyle).size.width } ?: 0
+    val fullLine = formatHexDump(ByteArray(RawLayout.Wide.bytesPerLine), RawLayout.Wide.bytesPerLine)
+    val wideLine = measurer.measure(fullLine, hexDumpStyle(), softWrap = false).size.width
+    BoxWithConstraints {
+        val gap = spacing.large
+        val layout = with(LocalDensity.current) { rawLayout(constraints.maxWidth, labelWidth + gap.roundToPx(), wideLine) }
+        Column(verticalArrangement = Arrangement.spacedBy(spacing.small)) {
+            files.forEachIndexed { index, file ->
+                if (layout.labelBeside) {
+                    Row {
+                        val width = with(LocalDensity.current) { labelWidth.toDp() } + gap
+                        Text(labels[index], Modifier.alignByBaseline().width(width), style = labelStyle)
+                        RawBytes(file, layout, Modifier.alignByBaseline().weight(1f))
+                    }
+                } else {
+                    Text(labels[index], style = labelStyle)
+                    RawBytes(file, layout)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun fileLabel(file: RawFile): String {
+    val type = file.type?.name ?: "?"
+    return file.size?.let { stringResource(Res.string.raw_file, file.id.hex(2), type, it) }
+        ?: stringResource(Res.string.raw_file_unknown_size, file.id.hex(2), type)
+}
+
+@Composable
+private fun RawBytes(file: RawFile, layout: RawLayout, modifier: Modifier = Modifier) {
+    Box(modifier) {
+        when (val bytes = file.data) {
+            null -> Text(
+                stringResource(Res.string.raw_file_error, file.id.hex(2), file.error ?: "?"),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+            else -> HexDump(formatHexDump(bytes, layout.bytesPerLine))
         }
     }
 }
