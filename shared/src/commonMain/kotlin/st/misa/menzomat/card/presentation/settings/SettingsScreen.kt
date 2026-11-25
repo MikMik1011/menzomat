@@ -51,6 +51,7 @@ import st.misa.menzomat.shared.resources.about_license
 import st.misa.menzomat.shared.resources.about_privacy
 import st.misa.menzomat.shared.resources.about_report
 import st.misa.menzomat.shared.resources.about_source
+import st.misa.menzomat.shared.resources.about_tip
 import st.misa.menzomat.shared.resources.about_version
 import st.misa.menzomat.shared.resources.report_description
 import st.misa.menzomat.shared.resources.report_faculty
@@ -209,9 +210,10 @@ private fun AboutSection(actions: SettingsActions) {
     val version = LocalPlatformServices.current.appInfo.versionName
     if (version.isNotBlank()) InfoRow(stringResource(Res.string.about_version), version)
     LinkRow(stringResource(Res.string.about_source), SOURCE_URL)
-    LinkRow(stringResource(Res.string.about_license), LICENSE_URL)
-    LinkRow(stringResource(Res.string.about_privacy), PRIVACY_URL)
+    LinkRow(stringResource(Res.string.about_tip), TIP_URL)
     ExternalRow(stringResource(Res.string.about_report), actions::onReportBug)
+    LinkRow(stringResource(Res.string.about_privacy), PRIVACY_URL)
+    LinkRow(stringResource(Res.string.about_license), LICENSE_URL)
 }
 
 @Composable
@@ -234,6 +236,7 @@ private fun ExternalRow(label: String, onClick: () -> Unit) {
 private const val SOURCE_URL = "https://github.com/MikMik1011/menzomat"
 private const val LICENSE_URL = "$SOURCE_URL/blob/main/LICENSE"
 private const val PRIVACY_URL = "$SOURCE_URL/blob/main/docs/privacy-policy.md"
+private const val TIP_URL = "https://misa.st/support"
 
 @Composable
 private fun SectionTitle(text: String) {
