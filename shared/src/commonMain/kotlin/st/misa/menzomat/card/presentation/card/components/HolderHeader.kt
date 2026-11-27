@@ -15,10 +15,13 @@ import st.misa.menzomat.card.domain.model.StudentCard
 import st.misa.menzomat.card.domain.model.StudyLevel
 import st.misa.menzomat.shared.resources.Res
 import st.misa.menzomat.shared.resources.faculty_number
+import st.misa.menzomat.shared.resources.faculty_uns_ef
 import st.misa.menzomat.shared.resources.faculty_uns_ff
 import st.misa.menzomat.shared.resources.faculty_uns_ftn
+import st.misa.menzomat.shared.resources.faculty_uns_mf
 import st.misa.menzomat.shared.resources.faculty_uns_pmf
 import st.misa.menzomat.shared.resources.faculty_uns_polj
+import st.misa.menzomat.shared.resources.faculty_vts_ns
 import st.misa.menzomat.shared.resources.holder_unknown
 import st.misa.menzomat.shared.resources.study_year
 import st.misa.menzomat.shared.resources.study_year_master
@@ -28,8 +31,11 @@ import st.misa.menzomat.ui.theme.spacing
 internal fun knownFacultyName(key: String): StringResource? = when (key) {
     "uns-ftn" -> Res.string.faculty_uns_ftn
     "uns-ff" -> Res.string.faculty_uns_ff
+    "uns-mf" -> Res.string.faculty_uns_mf
     "uns-pmf" -> Res.string.faculty_uns_pmf
     "uns-polj" -> Res.string.faculty_uns_polj
+    "uns-ef" -> Res.string.faculty_uns_ef
+    "vts-ns" -> Res.string.faculty_vts_ns
     else -> null
 }
 

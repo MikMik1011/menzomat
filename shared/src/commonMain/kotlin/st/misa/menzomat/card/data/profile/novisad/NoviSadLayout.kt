@@ -36,7 +36,10 @@ internal object NoviSadLayout {
     val facultyKeys: Map<Int, String> = mapOf(
         1 to "uns-ftn", // Faculty of Technical Sciences
         2 to "uns-ff", // Faculty of Philosophy
+        3 to "uns-mf", // Faculty of Medicine
         4 to "uns-pmf", // Faculty of Sciences
         6 to "uns-polj", // Faculty of Agriculture
+        15 to "uns-ef", // Faculty of Economics, Novi Sad
+        21 to "vts-ns", // Higher Education Technical School of Professional Studies, Novi Sad (not part of the university)
     )
 }

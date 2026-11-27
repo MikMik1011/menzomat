@@ -75,7 +75,7 @@ Rules that came from real cards and from the user:
 - Master's years are stored from 10 (`NoviSadLayout.FIRST_MASTER_YEAR`): a first-year master's card holds 10, and the second year is that card renewed (10 + 1), shown as "master's year 2" (`StudyLevel.Master`).
 - The holder's national id (JMBG) is deliberately never decoded, shown or masked. Do not add it back. It stays in the raw data, which is the card as read.
 - A card expires on the later of its two dates (`Validity.expiresOn`), so a renewed card is never flagged. `expiryWarning(validity, today)` returns `Expired` once that day has passed and `ExpiresSoon` from `EXPIRES_SOON_DAYS` (30) before it; `ExpiryBanner` shows it above the meals. Pass `today` in tests, never read the clock inside the logic.
-- Faculty ids 1, 2, 4 and 6 are known (Technical Sciences, Philosophy, Sciences, Agriculture) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
+- Faculty ids (decimal; the byte on the card is hex) 1, 2, 3, 4, 6, 15 and 21 are known (Technical Sciences, Philosophy, Medicine, Sciences, Agriculture, Economics in Novi Sad, and the Higher Education Technical School of Professional Studies, which is not part of the university) and listed in `NoviSadLayout.facultyKeys`; any other id shows "Faculty N". A new faculty needs a key there and its name in both string files (`FacultyNamesTest` checks).
 
 ## Conventions
 

@@ -158,8 +158,11 @@ class NoviSadProfileTest {
         fun facultyOf(id: String) = decode(currentCard.with(7 to padded("${id} 03 06 323039 2f3232", 22))).institution?.faculty
         assertEquals(Faculty(1, "uns-ftn"), facultyOf("01"))
         assertEquals(Faculty(2, "uns-ff"), facultyOf("02"))
+        assertEquals(Faculty(3, "uns-mf"), facultyOf("03"))
         assertEquals(Faculty(4, "uns-pmf"), facultyOf("04"))
         assertEquals(Faculty(6, "uns-polj"), facultyOf("06"))
+        assertEquals(Faculty(15, "uns-ef"), facultyOf("0F"))
+        assertEquals(Faculty(21, "vts-ns"), facultyOf("15"))
     }
 
     @Test

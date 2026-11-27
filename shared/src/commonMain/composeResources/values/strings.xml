@@ -78,6 +78,9 @@
     <string name="faculty_uns_ff">Filozofski fakultet</string>
     <string name="faculty_uns_pmf">Prirodno-matematički fakultet</string>
     <string name="faculty_uns_polj">Poljoprivredni fakultet</string>
+    <string name="faculty_uns_mf">Medicinski fakultet</string>
+    <string name="faculty_uns_ef">Ekonomski fakultet</string>
+    <string name="faculty_vts_ns">Visoka tehnička škola strukovnih studija</string>
     <string name="warning_truncated">podaci su prekratki</string>
     <string name="warning_missing">fajl nije pronađen</string>
     <string name="warning_invalid">neispravna vrednost: %1$s</string>
